@@ -6,7 +6,7 @@ import {
   Activity, Search, HeartHandshake
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { getFirestore, doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 // --- DATA CONSTANTS ---
@@ -34,7 +34,7 @@ const FOUR_HORSEMEN = [
     howItSounds: "It's not my fault we're late! If you hadn't reminded me, we wouldn't have this problem!",
     healthyAlternative: "Taking Responsibility: You're right, I forgot to check the time. I'm sorry.",
     antidote: "Take Responsibility",
-    antidoteDescription: "Accept your loverrr’s perspective even if you only agree with a small part of it."
+    antidoteDescription: "Accept your loverrr's perspective even if you only agree with a small part of it."
   },
   {
     name: "Stonewalling",
@@ -125,37 +125,48 @@ const LOVE_MAP_QUESTIONS = [
 const FEELING_WORDS = ["Overwhelmed", "Lonely", "Frustrated", "Worried", "Hurt", "Anxious", "Ignored", "Scared"];
 const NEED_WORDS = ["Support", "A hug", "Reassurance", "10 mins to talk", "Attention", "Kindness", "Validation"];
 
-// --- Firebase Initialization (Using placeholders for environment) ---
-const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+// --- Firebase Initialization ---
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+
 const app_init = initializeApp(firebaseConfig);
 const auth = getAuth(app_init);
 const db = getFirestore(app_init);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'harmony-repair-app';
+const APP_ID = 'harmony-repair-app';
+
+// Safe localStorage helper
+const safeLocalStorage = {
+  getItem: (key) => {
+    try { return localStorage.getItem(key); } catch { return null; }
+  },
+  setItem: (key, val) => {
+    try { localStorage.setItem(key, val); } catch {}
+  }
+};
 
 // --- Main App Component ---
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
-  const [coupleId, setCoupleId] = useState(localStorage.getItem('harmony_couple_id') || '');
+  const [coupleId, setCoupleId] = useState(safeLocalStorage.getItem('harmony_couple_id') || '');
   const [sharedData, setSharedData] = useState({ completedRituals: {} });
 
   useEffect(() => {
-    const initAuth = async () => {
-      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-      } else {
-        await signInAnonymously(auth);
-      }
-    };
-    initAuth();
+    signInAnonymously(auth).catch(console.error);
     const unsubscribe = onAuthStateChanged(auth, (u) => { if (u) setUser(u); });
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (!user || !coupleId) return;
-    const coupleDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'couples_sync', coupleId);
+    const coupleDocRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'couples_sync', coupleId);
     const unsubscribe = onSnapshot(coupleDocRef, (docSnap) => {
       if (docSnap.exists()) setSharedData(docSnap.data());
     }, (error) => console.error("Sync error:", error));
@@ -164,12 +175,12 @@ export default function App() {
 
   const saveSharedData = async (newData) => {
     if (!user || !coupleId) return;
-    const coupleDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'couples_sync', coupleId);
+    const coupleDocRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'couples_sync', coupleId);
     await setDoc(coupleDocRef, { ...sharedData, ...newData }, { merge: true });
   };
 
   const renderContent = () => {
-    if (!coupleId) return <SetupView onComplete={(id) => { setCoupleId(id); localStorage.setItem('harmony_couple_id', id); }} />;
+    if (!coupleId) return <SetupView onComplete={(id) => { setCoupleId(id); safeLocalStorage.setItem('harmony_couple_id', id); }} />;
     
     switch (activeTab) {
       case 'home': return <HomeView onNavigate={setActiveTab} coupleId={coupleId} />;
@@ -199,15 +210,15 @@ export default function App() {
         )}
       </header>
 
-      <main className="max-w-md mx-auto p-4 animate-in fade-in duration-500">
+      <main className="max-w-md mx-auto p-4">
         {renderContent()}
       </main>
 
       {coupleId && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 z-40 shadow-xl flex justify-around">
           <NavButton icon={<Clock size={24}/>} label="Rituals" active={activeTab === 'magic'} onClick={() => setActiveTab('magic')} />
-          <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={activeTab === 'navigator' || activeTab === 'repair-journey' || activeTab === 'horsemen' || activeTab === 'repair'} onClick={() => setActiveTab('navigator')} />
-          <NavButton icon={<Sparkles size={24}/>} label="Growth" active={activeTab === 'growth' || activeTab === 'lovemap' || activeTab === 'startup'} onClick={() => setActiveTab('growth')} />
+          <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={['navigator','repair-journey','horsemen','repair'].includes(activeTab)} onClick={() => setActiveTab('navigator')} />
+          <NavButton icon={<Sparkles size={24}/>} label="Growth" active={['growth','lovemap','startup'].includes(activeTab)} onClick={() => setActiveTab('growth')} />
         </nav>
       )}
     </div>
@@ -224,7 +235,7 @@ function SetupView({ onComplete }) {
       <h2 className="text-2xl font-bold mb-4 text-slate-900 leading-tight">Connect with your Loverrr</h2>
       <p className="text-slate-600 text-sm mb-10 max-w-[300px]">Choose a unique Couple ID to sync your progress with your loverrr in real-time.</p>
       <div className="w-full space-y-4 max-w-sm">
-        <input type="text" placeholder="e.g. SecretLover" className="w-full p-4.5 rounded-2xl border-2 border-slate-200 focus:border-rose-500 outline-none text-center font-bold text-xl transition-all shadow-sm" value={input} onChange={(e) => setInput(e.target.value)} />
+        <input type="text" placeholder="e.g. SecretLover" className="w-full p-4 rounded-2xl border-2 border-slate-200 focus:border-rose-500 outline-none text-center font-bold text-xl transition-all shadow-sm" value={input} onChange={(e) => setInput(e.target.value)} />
         <button onClick={() => onComplete(input)} disabled={!input} className="w-full bg-rose-500 text-white py-5 rounded-2xl font-bold text-lg shadow-xl active:scale-95 disabled:opacity-50 transition-all">Connect Now</button>
       </div>
     </div>
@@ -240,7 +251,7 @@ function HomeView({ onNavigate, coupleId }) {
         <p className="opacity-90 text-sm mb-8 relative z-10 leading-relaxed font-medium text-white/90">
           Synced as <strong>{coupleId}</strong>. Use these research-backed tools to navigate conflict and grow closer.
         </p>
-        <button onClick={() => onNavigate('navigator')} className="bg-white text-rose-600 w-full py-4.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all relative z-10">
+        <button onClick={() => onNavigate('navigator')} className="bg-white text-rose-600 w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all relative z-10">
           <Zap size={18} fill="currentColor" /> Solve Problem In Real-Time
         </button>
       </section>
@@ -257,7 +268,7 @@ function HomeView({ onNavigate, coupleId }) {
 
 function GrowthHub({ onNavigate, onBack }) {
   return (
-    <div className="space-y-6 animate-in slide-in-from-right-4">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Growth Hub</h2>
       <div className="space-y-4">
@@ -286,7 +297,7 @@ function ConflictNavigator({ onBack, onProcess, onHorsemen, onRepair }) {
   const [st, setSt] = useState('s');
   if (st === 'f') return <FloodingView onBack={() => setSt('s')} />;
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Conflict Navigator</h2>
       <div className="space-y-3">
@@ -305,10 +316,10 @@ function RepairJourney({ onBack }) {
   const [step, setStep] = useState(0);
   const currentStep = REPAIR_STEPS[step];
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <div className="flex justify-between items-center px-2">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight text-base">REPAIR Journey™</h2>
+        <h2 className="text-xl font-bold text-slate-900 tracking-tight">REPAIR Journey™</h2>
         <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">Step {step + 1} of 6</span>
       </div>
       <div className="bg-white rounded-[40px] border border-slate-200 overflow-hidden shadow-2xl min-h-[540px] flex flex-col">
@@ -353,7 +364,7 @@ function FloodingView({ onBack, inline = false }) {
     <div className={`bg-white rounded-[40px] ${!inline ? 'border border-slate-200 p-8 shadow-2xl' : ''} text-center`}>
       {!inline && <h2 className="text-2xl font-bold mb-4 text-slate-900">Physiological Flooding</h2>}
       <div className="text-6xl font-bold py-4 text-indigo-600 tabular-nums tracking-tighter">{Math.floor(sec/60)}:{(sec%60).toString().padStart(2,'0')}</div>
-      <button onClick={() => setRun(!run)} className={`px-10 py-3.5 rounded-2xl font-bold text-base flex items-center gap-2 mx-auto transition-all ${run ? 'bg-amber-100 text-amber-700 shadow-inner' : 'bg-indigo-600 text-white shadow-lg'}`}>
+      <button onClick={() => setRun(!run)} className={`px-10 py-3 rounded-2xl font-bold text-base flex items-center gap-2 mx-auto transition-all ${run ? 'bg-amber-100 text-amber-700 shadow-inner' : 'bg-indigo-600 text-white shadow-lg'}`}>
         {run ? <><Pause size={20} /> Pause</> : <><Play size={20} /> Start 20m Break</>}
       </button>
       <div className="mt-8 rounded-[32px] overflow-hidden border-8 border-white shadow-2xl group">
@@ -365,7 +376,7 @@ function FloodingView({ onBack, inline = false }) {
 
   if (inline) return view;
   return (
-    <div className="space-y-4 animate-in slide-in-from-bottom-4">
+    <div className="space-y-4">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-2"><ArrowLeft size={18}/> Back</button>
       {view}
     </div>
@@ -376,8 +387,16 @@ function SoftenedStartup({ onBack }) {
   const [feel, setFeel] = useState('');
   const [about, setAbout] = useState('');
   const [need, setNeed] = useState('');
+  const [copied, setCopied] = useState(false);
   const result = `I feel ${feel || '...'} about ${about || '...'} and I need ${need || '...'}.`;
   
+  const handleCopy = () => {
+    navigator.clipboard.writeText(result).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   const getFlags = (t) => {
     const f = []; if (!t) return f;
     const l = t.toLowerCase();
@@ -388,7 +407,7 @@ function SoftenedStartup({ onBack }) {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in pb-12">
+    <div className="space-y-8 pb-12">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Start-up Guide</h2>
       <div className="space-y-6">
@@ -410,7 +429,9 @@ function SoftenedStartup({ onBack }) {
           <Sparkles className="absolute -top-6 -right-6 text-white/10 w-32 h-32" />
           <p className="text-base font-bold text-indigo-200 mb-2">Gottman Compliant Draft</p>
           <p className="text-xl font-bold italic leading-relaxed mb-10">"{result}"</p>
-          <button onClick={() => { document.execCommand('copy'); }} className="bg-white text-indigo-600 w-full py-4.5 rounded-2xl font-bold text-sm active:scale-95 shadow-xl transition-all">Copy Complete Draft</button>
+          <button onClick={handleCopy} className="bg-white text-indigo-600 w-full py-4 rounded-2xl font-bold text-sm active:scale-95 shadow-xl transition-all flex items-center justify-center gap-2">
+            {copied ? <><Check size={16}/> Copied!</> : <><Copy size={16}/> Copy Complete Draft</>}
+          </button>
         </div>
       </div>
     </div>
@@ -419,7 +440,7 @@ function SoftenedStartup({ onBack }) {
 
 function FourHorsemenView({ onBack }) {
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">The 4 Horsemen</h2>
       <div className="space-y-5 text-left">
@@ -444,13 +465,13 @@ function FourHorsemenView({ onBack }) {
 function LoveMapQuiz({ onBack }) {
   const [idx, setIdx] = useState(0);
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <div className="bg-white p-12 rounded-[40px] border border-slate-200 shadow-2xl text-center min-h-[460px] flex flex-col justify-center relative overflow-hidden">
         <Sparkles className="absolute top-8 left-8 text-emerald-100" size={48} />
         <div className="bg-emerald-100 p-7 rounded-[30px] mb-10 mx-auto text-emerald-600 w-24 h-24 flex items-center justify-center shadow-inner"><HelpCircle size={48} /></div>
         <h3 className="text-2xl font-bold mb-14 px-2 text-slate-800 leading-tight tracking-tight">{LOVE_MAP_QUESTIONS[idx]}</h3>
-        <button onClick={() => setIdx((idx + 1) % LOVE_MAP_QUESTIONS.length)} className="w-full bg-emerald-600 text-white py-5 rounded-[22px] font-bold shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3 text-base">Next Question <ArrowRight size={22} /></button>
+        <button onClick={() => setIdx((idx + 1) % LOVE_MAP_QUESTIONS.length)} className="w-full bg-emerald-600 text-white py-5 rounded-[22px] font-bold shadow-xl hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3 text-base">Next Question <ArrowRight size={22} /></button>
       </div>
     </div>
   );
@@ -461,15 +482,15 @@ function RepairToolbox({ onBack }) {
   const [sel, setSel] = useState(null);
   const current = REPAIR_PHRASES.find(c => c.category === cat);
   return (
-    <div className="space-y-6 animate-in fade-in pb-12">
+    <div className="space-y-6 pb-12">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Repair Toolbox</h2>
         <p className="text-base text-slate-500 font-medium px-4">A Repair Attempt stops the negativity from escalating further.</p>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar px-1">{REPAIR_PHRASES.map(c => <button key={c.category} onClick={() => {setCat(c.category); setSel(null);}} className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm ${cat === c.category ? 'bg-rose-500 text-white shadow-rose-200' : 'bg-white text-slate-500 border border-slate-200 hover:border-rose-200'}`}>{c.category}</button>)}</div>
-      <div className="grid gap-3">{current.phrases.map(p => <button key={p} onClick={() => setSel(p)} className={`w-full text-left p-6 rounded-[28px] border flex justify-between items-center transition-all group active:bg-rose-50 ${sel === p ? 'border-rose-500 bg-rose-50 shadow-md scale-[1.02]' : 'border-slate-100 hover:border-rose-200 shadow-sm'}`}><span className="font-semibold text-slate-800 text-base">{p}</span>{sel === p && <Check size={20} className="text-rose-600"/>}</button>)}</div>
-      {sel && <div className="bg-indigo-600 p-8 rounded-[40px] text-white animate-in zoom-in-95 mt-6 shadow-2xl text-center"><h4 className="font-bold mb-4 flex items-center justify-center gap-2 underline underline-offset-8">Loverrr Response Guide</h4><p className="text-base leading-relaxed font-medium italic">"Acknowledge the attempt! Say: 'I hear you. Thank you for repairing. Let's slow down.'"</p><p className="text-xs text-indigo-300 mt-6 font-bold uppercase tracking-wide">Outcome: {current.outcome}</p></div>}
+      <div className="flex gap-2 overflow-x-auto pb-4 px-1">{REPAIR_PHRASES.map(c => <button key={c.category} onClick={() => {setCat(c.category); setSel(null);}} className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm ${cat === c.category ? 'bg-rose-500 text-white' : 'bg-white text-slate-500 border border-slate-200 hover:border-rose-200'}`}>{c.category}</button>)}</div>
+      <div className="grid gap-3">{current.phrases.map(p => <button key={p} onClick={() => setSel(p)} className={`w-full text-left p-6 rounded-[28px] border flex justify-between items-center transition-all active:bg-rose-50 ${sel === p ? 'border-rose-500 bg-rose-50 shadow-md scale-[1.02]' : 'border-slate-100 hover:border-rose-200 shadow-sm'}`}><span className="font-semibold text-slate-800 text-base">{p}</span>{sel === p && <Check size={20} className="text-rose-600"/>}</button>)}</div>
+      {sel && <div className="bg-indigo-600 p-8 rounded-[40px] text-white mt-6 shadow-2xl text-center"><h4 className="font-bold mb-4 flex items-center justify-center gap-2 underline underline-offset-8">Loverrr Response Guide</h4><p className="text-base leading-relaxed font-medium italic">"Acknowledge the attempt! Say: 'I hear you. Thank you for repairing. Let's slow down.'"</p><p className="text-xs text-indigo-300 mt-6 font-bold uppercase tracking-wide">Outcome: {current.outcome}</p></div>}
     </div>
   );
 }
@@ -478,7 +499,7 @@ function MagicHoursTracker({ onBack, sharedData, onUpdate }) {
   const completed = sharedData.completedRituals || {};
   const progress = (Object.values(completed).filter(Boolean).length / MAGIC_HOURS.length) * 100;
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6">
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <div className="bg-white p-10 rounded-[44px] border border-slate-200 shadow-2xl text-center">
         <span className="text-5xl font-bold text-rose-500 mb-2 block tabular-nums">{Math.round(progress)}%</span>
@@ -494,10 +515,8 @@ function MagicHoursTracker({ onBack, sharedData, onUpdate }) {
 
 function NavButton({ icon, label, active, onClick }) { return <button onClick={onClick} className={`flex flex-col items-center p-3 rounded-2xl transition-all ${active ? 'text-rose-600 bg-rose-50/70 shadow-sm' : 'text-slate-400 hover:text-slate-500'}`}><div>{icon}</div><span className="text-xs font-semibold mt-1.5">{label}</span></button>; }
 function Card({ icon, title, subtitle, onClick }) { return <button onClick={onClick} className="bg-white p-6 rounded-[36px] border border-slate-200 text-left active:scale-95 flex flex-col items-start min-h-[170px] shadow-sm group hover:border-rose-300 transition-all"><div className="bg-slate-50 p-4 rounded-2xl mb-auto group-hover:bg-rose-50 transition-colors shadow-inner">{icon}</div><h3 className="font-bold text-slate-800 text-base tracking-tight">{title}</h3><p className="text-slate-500 text-xs font-semibold mt-1.5">{subtitle}</p></button>; }
-function InputField({ label, val, setVal, placeholder }) { return <div className="space-y-2"><label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-3">{label}</label><input type="text" value={val} onChange={e => setVal(e.target.value)} placeholder={placeholder} className="w-full p-4.5 rounded-[22px] border-2 border-slate-100 bg-white focus:border-indigo-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm" /></div>; }
+function InputField({ label, val, setVal, placeholder }) { return <div className="space-y-2"><label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-3">{label}</label><input type="text" value={val} onChange={e => setVal(e.target.value)} placeholder={placeholder} className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-indigo-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm" /></div>; }
 function ActionButton({ title, desc, onClick, color, className="" }) { 
   const c = { rose: "bg-rose-50 border-rose-200 text-rose-900 shadow-rose-100", indigo: "bg-indigo-50 border-indigo-200 text-indigo-900 shadow-indigo-100", amber: "bg-amber-50 border-amber-200 text-amber-900 shadow-amber-100" };
   return <button onClick={onClick} className={`w-full p-8 rounded-[36px] border text-left shadow-sm transition-all active:scale-[0.98] ${c[color]} ${className}`}><h4 className="font-bold text-lg tracking-tight">{title}</h4><p className="text-sm opacity-80 font-medium mt-1.5 leading-relaxed">{desc}</p></button>; 
 }
-
-export default App;
