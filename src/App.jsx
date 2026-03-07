@@ -530,12 +530,13 @@ function PhrasePolisher({ onBack }) {
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-headers: { 
-  'Content-Type': 'application/json',
-  'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
-  'anthropic-version': '2023-06-01',
-  'anthropic-dangerous-direct-browser-access': 'true',
-},        body: JSON.stringify({
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
           system: `You are a Gottman Method relationship communication expert. Your job is to take a rough, emotionally charged, or poorly worded statement and rewrite it using Gottman principles.
