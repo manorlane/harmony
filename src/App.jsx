@@ -3,7 +3,7 @@ import {
   Heart, ShieldAlert, MessageCircle, Clock, BookOpen, CheckCircle, 
   ArrowRight, ArrowLeft, Smile, Zap, User, Sparkles, HelpCircle, 
   Copy, Check, Info, AlertCircle, Play, Pause, ChevronRight,
-  Activity, Search, HeartHandshake
+  Activity, Search, HeartHandshake, Wand2, RefreshCw, ChevronDown
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
@@ -192,6 +192,7 @@ export default function App() {
       case 'growth': return <GrowthHub onNavigate={setActiveTab} onBack={() => setActiveTab('home')} />;
       case 'startup': return <SoftenedStartup onBack={() => setActiveTab('growth')} />;
       case 'lovemap': return <LoveMapQuiz onBack={() => setActiveTab('growth')} />;
+      case 'polisher': return <PhrasePolisher onBack={() => setActiveTab('home')} />;
       default: return <HomeView onNavigate={setActiveTab} coupleId={coupleId} />;
     }
   };
@@ -218,6 +219,7 @@ export default function App() {
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 z-40 shadow-xl flex justify-around">
           <NavButton icon={<Clock size={24}/>} label="Rituals" active={activeTab === 'magic'} onClick={() => setActiveTab('magic')} />
           <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={['navigator','repair-journey','horsemen','repair'].includes(activeTab)} onClick={() => setActiveTab('navigator')} />
+          <NavButton icon={<Wand2 size={24}/>} label="Polish" active={activeTab === 'polisher'} onClick={() => setActiveTab('polisher')} />
           <NavButton icon={<Sparkles size={24}/>} label="Growth" active={['growth','lovemap','startup'].includes(activeTab)} onClick={() => setActiveTab('growth')} />
         </nav>
       )}
@@ -507,6 +509,146 @@ function MagicHoursTracker({ onBack, sharedData, onUpdate }) {
         <div className="w-full bg-slate-100 h-4 rounded-full overflow-hidden mt-6 shadow-inner"><div className="bg-rose-500 h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div></div>
       </div>
       <div className="space-y-4">{MAGIC_HOURS.map(h => <div key={h.id} onClick={() => onUpdate({ completedRituals: { ...completed, [h.id]: !completed[h.id] } })} className={`p-6 rounded-[36px] border cursor-pointer flex items-center gap-6 transition-all ${completed[h.id] ? 'bg-emerald-50 border-emerald-200 shadow-lg translate-x-1' : 'bg-white hover:border-emerald-100 shadow-sm'}`}><div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${completed[h.id] ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-50 text-slate-300 shadow-inner'}`}>{completed[h.id] ? <CheckCircle size={28}/> : <Clock size={28}/>}</div><div className="flex-grow"><div className="flex justify-between items-center"><h3 className="font-bold text-base text-slate-800 tracking-tight">{h.label}</h3><span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">{h.time}</span></div><p className="text-sm text-slate-500 font-medium leading-relaxed mt-1">{h.desc}</p></div></div>)}</div>
+    </div>
+  );
+}
+
+// --- Phrase Polisher ---
+
+function PhrasePolisher({ onBack }) {
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState('');
+
+  const polish = async (textToPolish) => {
+    if (!textToPolish.trim()) return;
+    setLoading(true);
+    setResult(null);
+    setError('');
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+headers: { 
+  'Content-Type': 'application/json',
+  'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+  'anthropic-version': '2023-06-01',
+  'anthropic-dangerous-direct-browser-access': 'true',
+},        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are a Gottman Method relationship communication expert. Your job is to take a rough, emotionally charged, or poorly worded statement and rewrite it using Gottman principles.
+
+Rules:
+- Use "I feel..." language, never "You always/never..."
+- Remove criticism, contempt, defensiveness, and stonewalling (the Four Horsemen)
+- Focus on the speaker feelings and needs, not the partner flaws
+- Be warm, specific, and constructive
+- Keep the core message intact, just improve how it is said
+
+Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
+{
+  "polished": "The rewritten phrase here",
+  "breakdown": [
+    {"issue": "What was problematic", "fix": "What was changed and why"},
+    {"issue": "...", "fix": "..."}
+  ]
+}
+
+Keep breakdown to 2-4 items maximum. Be concise.`,
+          messages: [{ role: 'user', content: `Please polish this phrase: "${textToPolish}"` }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content.map(i => i.text || '').join('');
+      const clean = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+      setResult(parsed);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      console.error(err);
+    }
+    setLoading(false);
+  };
+
+  const handleCopy = () => {
+    if (!result) return;
+    navigator.clipboard.writeText(result.polished).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleRefine = () => {
+    if (!result) return;
+    setInput(result.polished);
+    setResult(null);
+  };
+
+  return (
+    <div className="space-y-6 pb-12">
+      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Phrase Polisher</h2>
+        <p className="text-slate-500 text-sm font-medium">Type what you want to say — even roughly — and get a Gottman-approved version back.</p>
+      </div>
+      <div className="space-y-3">
+        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">What do you want to say?</label>
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="e.g. You never listen to me and it's so frustrating..."
+          rows={4}
+          className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-indigo-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm resize-none"
+        />
+        <button
+          onClick={() => polish(input)}
+          disabled={!input.trim() || loading}
+          className="w-full bg-gradient-to-r from-rose-500 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <><RefreshCw size={18} className="animate-spin" /> Polishing...</>
+          ) : (
+            <><Wand2 size={18} /> Polish It</>
+          )}
+        </button>
+      </div>
+      {error && (
+        <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-rose-600 text-sm font-medium text-center">
+          {error}
+        </div>
+      )}
+      {result && (
+        <div className="space-y-4">
+          <div className="bg-indigo-600 p-8 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+            <Sparkles className="absolute -top-4 -right-4 text-white/10 w-24 h-24" />
+            <p className="text-xs font-bold text-indigo-300 mb-3 uppercase tracking-widest">Gottman-Approved Version</p>
+            <p className="text-lg font-bold italic leading-relaxed mb-6">"{result.polished}"</p>
+            <div className="flex gap-3">
+              <button onClick={handleCopy} className="flex-1 bg-white text-indigo-600 py-3 rounded-2xl font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2">
+                {copied ? <><Check size={16}/> Copied!</> : <><Copy size={16}/> Copy</>}
+              </button>
+              <button onClick={handleRefine} className="flex-1 bg-indigo-500 text-white py-3 rounded-2xl font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 border border-indigo-400">
+                <RefreshCw size={16}/> Refine Further
+              </button>
+            </div>
+          </div>
+          <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
+              <h3 className="font-bold text-slate-800 text-base flex items-center gap-2"><ChevronDown size={18} className="text-rose-400"/> What changed & why</h3>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {result.breakdown.map((item, i) => (
+                <div key={i} className="p-5 space-y-2">
+                  <p className="text-xs font-bold text-rose-500 uppercase tracking-wide flex items-center gap-1.5"><AlertCircle size={12}/> {item.issue}</p>
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed">{item.fix}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
