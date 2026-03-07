@@ -528,11 +528,17 @@ function PhrasePolisher({ onBack }) {
     setResult(null);
     setError('');
     try {
+      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        setError('API key not configured. Please check Vercel environment variables.');
+        setLoading(false);
+        return;
+      }
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+          'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
@@ -561,13 +567,17 @@ Keep breakdown to 2-4 items maximum. Be concise.`,
           messages: [{ role: 'user', content: `Please polish this phrase: "${textToPolish}"` }]
         })
       });
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData?.error?.message || `HTTP ${response.status}`);
+      }
       const data = await response.json();
       const text = data.content.map(i => i.text || '').join('');
       const clean = text.replace(/```json|```/g, '').trim();
       const parsed = JSON.parse(clean);
       setResult(parsed);
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError('Error: ' + (err.message || 'Something went wrong. Please try again.'));
       console.error(err);
     }
     setLoading(false);
