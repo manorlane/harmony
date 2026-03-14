@@ -200,25 +200,25 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-24 leading-relaxed">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm">
+    <div className="min-h-screen bg-white text-zinc-900 font-sans pb-24">
+      <header className="bg-white border-b border-zinc-100 sticky top-0 z-50 px-5 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('home')}>
           <Heart className="text-rose-500 fill-rose-500" size={24} />
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">Harmony</h1>
+          <h1 className="text-lg font-black tracking-tight text-zinc-900 uppercase">Harmony</h1>
         </div>
         {coupleId && (
-          <div className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+          <div className="text-xs font-bold text-zinc-500 bg-zinc-100 px-3 py-1.5 rounded-full">
             ID: {coupleId}
           </div>
         )}
       </header>
 
-      <main className="max-w-md mx-auto p-4">
+      <main className="max-w-md mx-auto px-4 pt-2">
         {renderContent()}
       </main>
 
       {coupleId && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 z-40 shadow-xl flex justify-around">
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-100 px-3 py-2 z-40 flex justify-around">
           <NavButton icon={<Clock size={24}/>} label="Rituals" active={activeTab === 'magic'} onClick={() => setActiveTab('magic')} />
           <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={['navigator','repair-journey','horsemen','repair','startup','traps'].includes(activeTab)} onClick={() => setActiveTab('navigator')} />
           <NavButton icon={<Wand2 size={24}/>} label="Polish" active={activeTab === 'polisher'} onClick={() => setActiveTab('polisher')} />
@@ -231,16 +231,99 @@ export default function App() {
 
 // --- Component Definitions ---
 
+
+// ── Inline SVG Illustrations ──────────────────────────────────────────────
+function IllustrationHome() {
+  return (
+    <svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="20" r="10" stroke="white" strokeWidth="2.5" fill="none" opacity="0.6"/>
+      <circle cx="52" cy="20" r="10" stroke="white" strokeWidth="2.5" fill="none" opacity="0.6"/>
+      <path d="M18 45 Q28 35 40 38 Q52 35 62 45" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.6"/>
+      <path d="M40 14 L43 20 L50 21 L45 26 L46 33 L40 30 L34 33 L35 26 L30 21 L37 20 Z" fill="white" opacity="0.9"/>
+    </svg>
+  );
+}
+function IllustrationConflict() {
+  return (
+    <svg width="70" height="60" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M35 5 L38 22 L52 18 L30 55 L27 38 L13 42 Z" stroke="white" strokeWidth="2.5" fill="none" strokeLinejoin="round" opacity="0.85"/>
+      <circle cx="14" cy="12" r="3" fill="white" opacity="0.4"/>
+      <circle cx="58" cy="8" r="2" fill="white" opacity="0.3"/>
+      <circle cx="62" cy="48" r="4" fill="white" opacity="0.25"/>
+    </svg>
+  );
+}
+function IllustrationGrowth() {
+  return (
+    <svg width="70" height="65" viewBox="0 0 70 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M35 60 L35 25" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
+      <path d="M35 40 Q20 35 18 20 Q30 20 35 33" fill="white" opacity="0.5"/>
+      <path d="M35 32 Q50 25 52 10 Q40 12 35 26" fill="white" opacity="0.5"/>
+      <path d="M25 60 L45 60" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.6"/>
+    </svg>
+  );
+}
+function IllustrationRepair() {
+  return (
+    <svg width="80" height="55" viewBox="0 0 80 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 45 Q20 20 35 28 Q50 36 65 10" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.8"/>
+      <circle cx="35" cy="28" r="4" fill="white" opacity="0.7"/>
+      <circle cx="65" cy="10" r="5" fill="white" opacity="0.9"/>
+      <path d="M60 10 L65 5 L70 10 L65 15 Z" fill="white" opacity="0.7"/>
+    </svg>
+  );
+}
+function IllustrationTraps() {
+  return (
+    <svg width="65" height="65" viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="28" stroke="white" strokeWidth="1.5" opacity="0.3"/>
+      <circle cx="32" cy="32" r="18" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+      <circle cx="32" cy="32" r="8" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+      <line x1="32" y1="4" x2="32" y2="60" stroke="white" strokeWidth="1.5" opacity="0.25"/>
+      <line x1="4" y1="32" x2="60" y2="32" stroke="white" strokeWidth="1.5" opacity="0.25"/>
+      <line x1="12" y1="12" x2="52" y2="52" stroke="white" strokeWidth="1.5" opacity="0.2"/>
+      <line x1="52" y1="12" x2="12" y2="52" stroke="white" strokeWidth="1.5" opacity="0.2"/>
+      <circle cx="32" cy="32" r="3" fill="white" opacity="0.9"/>
+    </svg>
+  );
+}
+function IllustrationConvo() {
+  return (
+    <svg width="75" height="60" viewBox="0 0 75 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="5" width="38" height="26" rx="8" stroke="white" strokeWidth="2.5" fill="none" opacity="0.8"/>
+      <path d="M12 37 L8 47 L22 40" fill="white" opacity="0.6"/>
+      <rect x="30" y="28" width="38" height="26" rx="8" stroke="white" strokeWidth="2.5" fill="none" opacity="0.6"/>
+      <path d="M60 48 L67 55 L55 53" fill="white" opacity="0.4"/>
+      <circle cx="17" cy="18" r="2.5" fill="white" opacity="0.7"/>
+      <circle cx="25" cy="18" r="2.5" fill="white" opacity="0.7"/>
+      <circle cx="33" cy="18" r="2.5" fill="white" opacity="0.7"/>
+    </svg>
+  );
+}
+function IllustrationPolish() {
+  return (
+    <svg width="65" height="65" viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 50 L45 20 L52 27 L22 57 Z" stroke="white" strokeWidth="2.5" fill="none" strokeLinejoin="round" opacity="0.8"/>
+      <path d="M45 20 L50 10 L55 15 L52 27" stroke="white" strokeWidth="2.5" fill="none" strokeLinejoin="round" opacity="0.8"/>
+      <path d="M15 50 L10 55" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.6"/>
+      <circle cx="48" cy="14" r="3" fill="white" opacity="0.6"/>
+      <path d="M8 18 L12 14 M56 44 L60 48 M58 20 L54 24" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
+    </svg>
+  );
+}
+
 function SetupView({ onComplete }) {
   const [input, setInput] = useState('');
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] text-center p-6">
-      <Heart className="text-rose-600 fill-rose-600 mb-8" size={56} />
-      <h2 className="text-2xl font-bold mb-4 text-slate-900 leading-tight">Connect with your Loverrr</h2>
-      <p className="text-slate-600 text-sm mb-10 max-w-[300px]">Choose a unique Couple ID to sync your progress with your loverrr in real-time.</p>
-      <div className="w-full space-y-4 max-w-sm">
-        <input type="text" placeholder="e.g. SecretLover" className="w-full p-4 rounded-2xl border-2 border-slate-200 focus:border-rose-500 outline-none text-center font-bold text-xl transition-all shadow-sm" value={input} onChange={(e) => setInput(e.target.value)} />
-        <button onClick={() => onComplete(input)} disabled={!input} className="w-full bg-rose-500 text-white py-5 rounded-2xl font-bold text-lg shadow-xl active:scale-95 disabled:opacity-50 transition-all">Connect Now</button>
+    <div className="flex flex-col items-center justify-center min-h-[75vh] text-center px-6">
+      <div className="w-20 h-20 rounded-2xl bg-zinc-900 flex items-center justify-center mb-8">
+        <Heart className="text-white fill-white" size={36} />
+      </div>
+      <h2 className="text-3xl font-black mb-3 text-zinc-900 tracking-tight leading-tight">Connect with<br/>your Loverrr</h2>
+      <p className="text-zinc-400 text-sm mb-10 max-w-[280px] leading-relaxed">Choose a unique Couple ID. Both partners enter the same ID to sync in real-time.</p>
+      <div className="w-full space-y-3 max-w-sm">
+        <input type="text" placeholder="e.g. SecretLover" className="w-full p-4 rounded-xl border border-zinc-200 focus:border-zinc-900 outline-none text-center font-bold text-xl transition-all text-zinc-900" value={input} onChange={(e) => setInput(e.target.value)} />
+        <button onClick={() => onComplete(input)} disabled={!input} className="w-full bg-zinc-900 text-white py-4 rounded-xl font-black text-base active:scale-95 disabled:opacity-40 transition-all tracking-wide">CONNECT NOW</button>
       </div>
     </div>
   );
@@ -248,23 +331,21 @@ function SetupView({ onComplete }) {
 
 function HomeView({ onNavigate, coupleId }) {
   return (
-    <div className="space-y-6">
-      <section className="bg-gradient-to-br from-rose-500 to-indigo-600 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
-        <Sparkles className="absolute -top-4 -right-4 text-white/10 w-24 h-24" />
-        <h2 className="text-2xl font-bold mb-2 relative z-10">Loverrr's Space</h2>
-        <p className="opacity-90 text-sm mb-8 relative z-10 leading-relaxed font-medium text-white/90">
-          Synced as <strong>{coupleId}</strong>. Use these research-backed tools to navigate conflict and grow closer.
-        </p>
-        <button onClick={() => onNavigate('navigator')} className="bg-white text-rose-600 w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all relative z-10">
-          <Zap size={18} fill="currentColor" /> Solve Problem In Real-Time
+    <div className="space-y-5 pt-2">
+      <section className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden">
+        <div className="absolute right-5 top-5 opacity-20"><IllustrationHome /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 block">Synced as {coupleId}</p>
+        <h2 className="text-2xl font-black mb-1 tracking-tight leading-tight">Welcome back,<br/>Loverrr 💛</h2>
+        <p className="text-zinc-400 text-xs font-medium mb-6 leading-relaxed">Research-backed tools for a stronger relationship.</p>
+        <button onClick={() => onNavigate('navigator')} className="bg-white text-zinc-900 w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all tracking-wide">
+          <Zap size={16} fill="currentColor" /> NAVIGATE CONFLICT
         </button>
       </section>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Card icon={<ShieldAlert size={24} className="text-rose-500" />} title="Conflict" subtitle="Fix Issues" onClick={() => onNavigate('navigator')} />
-        <Card icon={<Sparkles size={24} className="text-amber-500" />} title="Growth" subtitle="Deepen Love" onClick={() => onNavigate('growth')} />
-        <Card icon={<BookOpen size={24} className="text-indigo-500" />} title="4 Horsemen" subtitle="Education" onClick={() => onNavigate('horsemen')} />
-        <Card icon={<Clock size={24} className="text-emerald-500" />} title="Rituals" subtitle="Magic Hours" onClick={() => onNavigate('magic')} />
+      <div className="grid grid-cols-2 gap-3">
+        <Card icon={<ShieldAlert size={20} className="text-zinc-600" />} title="Conflict" subtitle="Fix Issues" onClick={() => onNavigate('navigator')} />
+        <Card icon={<Sparkles size={20} className="text-zinc-600" />} title="Growth" subtitle="Deepen Love" onClick={() => onNavigate('growth')} />
+        <Card icon={<BookOpen size={20} className="text-zinc-600" />} title="4 Horsemen" subtitle="Understand Patterns" onClick={() => onNavigate('horsemen')} />
+        <Card icon={<Clock size={20} className="text-zinc-600" />} title="Rituals" subtitle="Magic Hours" onClick={() => onNavigate('magic')} />
       </div>
     </div>
   );
@@ -272,17 +353,22 @@ function HomeView({ onNavigate, coupleId }) {
 
 function GrowthHub({ onNavigate, onBack }) {
   return (
-    <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Growth Hub</h2>
-      <div className="space-y-4">
-        <button onClick={() => onNavigate('convo')} className="w-full bg-white p-6 rounded-3xl border border-slate-200 text-left flex items-center gap-4 hover:border-emerald-300 transition-all active:scale-95 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500"><MessageSquare size={28} /></div>
+    <div className="space-y-5 pt-2">
+      <button onClick={onBack} className="text-zinc-400 flex items-center gap-1.5 text-xs font-black uppercase tracking-widest hover:text-zinc-900 transition-colors"><ArrowLeft size={14} /> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden">
+        <div className="absolute right-5 top-4 opacity-20"><IllustrationGrowth /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Growth Hub</p>
+        <h2 className="text-2xl font-black tracking-tight leading-tight mb-1">Deepen<br/>Your Bond 🌱</h2>
+        <p className="text-zinc-400 text-xs font-medium leading-relaxed">Tools to know each other better every day.</p>
+      </div>
+      <div className="space-y-3">
+        <button onClick={() => onNavigate('convo')} className="w-full bg-white p-5 rounded-2xl border border-zinc-200 text-left flex items-center gap-4 hover:border-zinc-900 transition-all active:scale-95 group">
+          <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-900 group-hover:text-white transition-colors"><MessageSquare size={22} /></div>
           <div className="flex-grow">
-            <h3 className="font-bold text-slate-800 text-base">Conversation Starters</h3>
-            <p className="text-sm text-slate-500">Fun questions for road trips, picnics & date nights.</p>
+            <h3 className="font-black text-zinc-900 text-sm">Conversation Starters</h3>
+            <p className="text-xs text-zinc-400 font-medium mt-0.5">Road trips, date nights & picnics.</p>
           </div>
-          <ChevronRight size={20} className="text-slate-300" />
+          <ChevronRight size={16} className="text-zinc-300" />
         </button>
       </div>
     </div>
@@ -294,8 +380,13 @@ function ConflictNavigator({ onBack, onProcess, onHorsemen, onRepair, onStartup,
   if (st === 'f') return <FloodingView onBack={() => setSt('s')} />;
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Conflict Navigator</h2>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden mb-2">
+        <div className="absolute right-5 top-4 opacity-20"><IllustrationConflict /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Conflict Navigator</p>
+        <h2 className="text-2xl font-black tracking-tight leading-tight mb-1">Navigate<br/>The Storm ⚡</h2>
+        <p className="text-zinc-400 text-xs font-medium leading-relaxed">Tools to de-escalate and find resolution.</p>
+      </div>
       <div className="space-y-3">
         <ActionButton title="Repair Phrases" desc="Instant de-escalation toolbox" onClick={onRepair} color="rose" />
         <div className="flex gap-3">
@@ -317,33 +408,33 @@ function RepairJourney({ onBack }) {
   const currentStep = REPAIR_STEPS[step];
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back</button>
       <div className="flex justify-between items-center px-2">
-        <h2 className="text-xl font-bold text-slate-900 tracking-tight">REPAIR Journey™</h2>
-        <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">Step {step + 1} of 6</span>
+        <h2 className="text-xl font-black text-zinc-900 tracking-tight">REPAIR Journey™</h2>
+        <span className="text-xs font-black text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">Step {step + 1} of 6</span>
       </div>
-      <div className="bg-white rounded-[40px] border border-slate-200 overflow-hidden shadow-2xl min-h-[540px] flex flex-col">
-        <div className="bg-slate-900 p-8 text-white">
+      <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden min-h-[520px] flex flex-col">
+        <div className="bg-zinc-900 p-7 text-white relative overflow-hidden">
           <div className="flex items-center gap-3 mb-2 opacity-60">
             {currentStep.icon}
             <span className="text-xs font-bold tracking-wider">Phase {step + 1}</span>
           </div>
           <h3 className="text-2xl font-bold tracking-tight">{currentStep.title}</h3>
-          <p className="text-rose-300 text-base font-semibold mt-1">{currentStep.desc}</p>
+          <p className="text-zinc-400 text-sm font-bold mt-1">{currentStep.desc}</p>
         </div>
         <div className="p-8 flex-grow flex flex-col justify-center">
-          <p className="text-slate-700 text-lg leading-relaxed font-bold mb-8 italic text-center">
+          <p className="text-zinc-700 text-lg leading-relaxed font-bold mb-8 italic text-center">
             "{currentStep.content}"
           </p>
-          <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-inner">
-            <p className="text-xs text-slate-500 font-bold mb-2 uppercase tracking-wide">How to Proceed:</p>
-            <p className="text-base text-slate-700 font-medium leading-relaxed">{currentStep.instruction}</p>
+          <div className="bg-zinc-50 p-5 rounded-xl border border-zinc-100">
+            <p className="text-xs text-zinc-500 font-bold mb-2 uppercase tracking-wide">How to Proceed:</p>
+            <p className="text-base text-zinc-700 font-medium leading-relaxed">{currentStep.instruction}</p>
           </div>
           {currentStep.id === 'R1' && <div className="mt-8"><FloodingView inline={true} /></div>}
         </div>
-        <div className="p-6 border-t border-slate-50 flex gap-4 bg-slate-50/30">
-          {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 bg-white border border-slate-200 text-slate-500 py-4 rounded-2xl font-bold shadow-sm transition-all active:scale-95">Prev</button>}
-          <button onClick={() => step < 5 ? setStep(s => s + 1) : onBack()} className="flex-[2] bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all">
+        <div className="p-6 border-t border-zinc-50 flex gap-4 bg-zinc-50/30">
+          {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 bg-white border border-zinc-200 text-zinc-500 py-4 rounded-xl font-black transition-all active:scale-95 text-sm">Prev</button>}
+          <button onClick={() => step < 5 ? setStep(s => s + 1) : onBack()} className="flex-[2] bg-zinc-900 text-white py-4 rounded-xl font-black active:scale-95 transition-all tracking-wide text-sm uppercase">
             {step < 5 ? 'Next Step' : 'Journey Complete'}
           </button>
         </div>
@@ -361,23 +452,23 @@ function FloodingView({ onBack, inline = false }) {
   }, [run, sec]);
 
   const view = (
-    <div className={`bg-white rounded-[40px] ${!inline ? 'border border-slate-200 p-8 shadow-2xl' : ''} text-center`}>
-      {!inline && <h2 className="text-2xl font-bold mb-4 text-slate-900">Physiological Flooding</h2>}
-      <div className="text-6xl font-bold py-4 text-indigo-600 tabular-nums tracking-tighter">{Math.floor(sec/60)}:{(sec%60).toString().padStart(2,'0')}</div>
-      <button onClick={() => setRun(!run)} className={`px-10 py-3 rounded-2xl font-bold text-base flex items-center gap-2 mx-auto transition-all ${run ? 'bg-amber-100 text-amber-700 shadow-inner' : 'bg-indigo-600 text-white shadow-lg'}`}>
+    <div className={`bg-white rounded-[40px] ${!inline ? 'border border-zinc-200 p-8 shadow-2xl' : ''} text-center`}>
+      {!inline && <h2 className="text-2xl font-black mb-4 text-zinc-900 tracking-tight">Take a Break ⏱️</h2>}
+      <div className="text-6xl font-black py-4 text-zinc-900 tabular-nums tracking-tighter">{Math.floor(sec/60)}:{(sec%60).toString().padStart(2,'0')}</div>
+      <button onClick={() => setRun(!run)} className={`px-10 py-3 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 mx-auto transition-all ${run ? "bg-zinc-100 text-zinc-700" : "bg-zinc-900 text-white"}`}>
         {run ? <><Pause size={20} /> Pause</> : <><Play size={20} /> Start 20m Break</>}
       </button>
       <div className="mt-8 rounded-[32px] overflow-hidden border-8 border-white shadow-2xl group">
         <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600" alt="Puppy" className="group-hover:scale-105 transition-transform duration-700" />
       </div>
-      {!inline && <p className="text-sm text-slate-500 mt-6 italic font-medium leading-relaxed px-4 text-center">"Research shows looking at animals lowers cortisol. Focus on the puppy and breathe."</p>}
+      {!inline && <p className="text-sm text-zinc-500 mt-6 italic font-medium leading-relaxed px-4 text-center">"Research shows looking at animals lowers cortisol. Focus on the puppy and breathe."</p>}
     </div>
   );
 
   if (inline) return view;
   return (
     <div className="space-y-4">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-2"><ArrowLeft size={18}/> Back</button>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-2"><ArrowLeft size={18}/> Back</button>
       {view}
     </div>
   );
@@ -408,13 +499,17 @@ function SoftenedStartup({ onBack }) {
 
   return (
     <div className="space-y-8 pb-12">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Conflict</button>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Start-up Guide</h2>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back to Conflict</button>
+      <div className="bg-zinc-900 rounded-2xl p-6 text-white mb-2">
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">Communication</p>
+        <h2 className="text-2xl font-black tracking-tight">Start-up Guide 💬</h2>
+        <p className="text-zinc-400 text-xs font-medium mt-1 leading-relaxed">Build a Gottman-approved opening statement.</p>
+      </div>
       <div className="space-y-6">
         <div className="space-y-3">
           <InputField label="1. I Feel..." val={feel} setVal={setFeel} placeholder="Loneliness, worry..." />
           {getFlags(feel).map(f => <p key={f} className="text-xs text-rose-500 font-bold px-4 flex items-center gap-2"><AlertCircle size={14}/> {f}</p>)}
-          <div className="flex flex-wrap gap-2 px-2">{FEELING_WORDS.map(w => <button key={w} onClick={() => setFeel(w)} className="text-xs bg-white border border-slate-200 px-3.5 py-2 rounded-full font-semibold text-slate-600 hover:border-indigo-400 transition-all shadow-sm">{w}</button>)}</div>
+          <div className="flex flex-wrap gap-2">{FEELING_WORDS.map(w => <button key={w} onClick={() => setFeel(w)} className="text-xs bg-white border border-zinc-200 px-3 py-1.5 rounded-lg font-bold text-zinc-600 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-all">{w}</button>)}</div>
         </div>
         <div className="space-y-3">
           <InputField label="2. About What..." val={about} setVal={setAbout} placeholder="Describe the neutral situation..." />
@@ -423,13 +518,13 @@ function SoftenedStartup({ onBack }) {
         <div className="space-y-3">
           <InputField label="3. I Need..." val={need} setVal={setNeed} placeholder="A hug, help tonight..." />
           {getFlags(need).map(f => <p key={f} className="text-xs text-rose-500 font-bold px-4 flex items-center gap-2"><AlertCircle size={14}/> {f}</p>)}
-          <div className="flex flex-wrap gap-2 px-2">{NEED_WORDS.map(w => <button key={w} onClick={() => setNeed(w)} className="text-xs bg-white border border-slate-200 px-3.5 py-2 rounded-full font-semibold text-slate-600 hover:border-indigo-400 transition-all shadow-sm">{w}</button>)}</div>
+          <div className="flex flex-wrap gap-2">{NEED_WORDS.map(w => <button key={w} onClick={() => setNeed(w)} className="text-xs bg-white border border-zinc-200 px-3 py-1.5 rounded-lg font-bold text-zinc-600 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-all">{w}</button>)}</div>
         </div>
-        <div className="bg-indigo-600 p-10 rounded-[40px] text-white shadow-2xl relative mt-10 overflow-hidden text-center border border-white/10">
+        <div className="bg-zinc-900 p-7 rounded-2xl text-white relative overflow-hidden text-center mt-6">
           <Sparkles className="absolute -top-6 -right-6 text-white/10 w-32 h-32" />
-          <p className="text-base font-bold text-indigo-200 mb-2">Gottman Compliant Draft</p>
-          <p className="text-xl font-bold italic leading-relaxed mb-10">"{result}"</p>
-          <button onClick={handleCopy} className="bg-white text-indigo-600 w-full py-4 rounded-2xl font-bold text-sm active:scale-95 shadow-xl transition-all flex items-center justify-center gap-2">
+          <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 block">Gottman Compliant Draft</p>
+          <p className="text-lg font-bold italic leading-relaxed mb-7 text-zinc-100">"{result}"</p>
+          <button onClick={handleCopy} className="bg-white text-zinc-900 w-full py-3.5 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2">
             {copied ? <><Check size={16}/> Copied!</> : <><Copy size={16}/> Copy Complete Draft</>}
           </button>
         </div>
@@ -441,19 +536,23 @@ function SoftenedStartup({ onBack }) {
 function FourHorsemenView({ onBack }) {
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">The 4 Horsemen</h2>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-6 text-white mb-2">
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">Education</p>
+        <h2 className="text-2xl font-black tracking-tight">The 4 Horsemen 🐴</h2>
+        <p className="text-zinc-400 text-xs font-medium mt-1 leading-relaxed">Patterns that predict relationship breakdown — and their antidotes.</p>
+      </div>
       <div className="space-y-5 text-left">
         {FOUR_HORSEMEN.map((h, i) => (
-          <div key={i} className="bg-white p-7 rounded-[32px] border border-slate-200 shadow-sm hover:border-rose-200 transition-colors group">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-zinc-200 hover:border-zinc-900 transition-colors group">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 shadow-inner group-hover:rotate-3 transition-transform"><ShieldAlert size={28} /></div>
-              <h3 className="font-bold text-xl text-slate-900">{h.name}</h3>
+              <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-900 group-hover:text-white transition-all"><ShieldAlert size={28} /></div>
+              <h3 className="font-black text-lg text-zinc-900 tracking-tight">{h.name}</h3>
             </div>
-            <p className="text-base text-slate-600 mb-6 leading-relaxed font-medium">{h.description}</p>
+            <p className="text-sm text-zinc-500 mb-4 leading-relaxed font-medium">{h.description}</p>
             <div className="space-y-4">
-              <div className="bg-rose-50/50 p-5 rounded-2xl border border-rose-100"><p className="text-xs font-bold text-rose-600 mb-1.5 uppercase tracking-wide">How it sounds:</p><p className="italic text-sm text-slate-700 font-medium">"{h.howItSounds}"</p></div>
-              <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100"><p className="text-xs font-bold text-emerald-600 mb-1.5 flex items-center gap-1.5 uppercase tracking-wide"><CheckCircle size={14}/> Healthy Choice:</p><p className="italic text-sm text-slate-700 font-medium">{h.healthyAlternative}</p></div>
+              <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100"><p className="text-xs font-black text-zinc-400 mb-1.5 uppercase tracking-widest">How it sounds:</p><p className="italic text-sm text-zinc-700 font-medium">"{h.howItSounds}"</p></div>
+              <div className="bg-zinc-900 p-4 rounded-xl"><p className="text-xs font-black text-zinc-300 mb-1.5 flex items-center gap-1.5 uppercase tracking-widest"><CheckCircle size={14}/> Healthy Choice:</p><p className="italic text-sm text-zinc-200 font-medium">{h.healthyAlternative}</p></div>
             </div>
           </div>
         ))}
@@ -470,14 +569,15 @@ function RepairToolbox({ onBack }) {
   const current = REPAIR_PHRASES.find(c => c.category === cat);
   return (
     <div className="space-y-6 pb-12">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Repair Toolbox</h2>
-        <p className="text-base text-slate-500 font-medium px-4">A Repair Attempt stops the negativity from escalating further.</p>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-6 text-white mb-1">
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">De-escalate</p>
+        <h2 className="text-2xl font-black tracking-tight">Repair Toolbox 🛠️</h2>
+        <p className="text-zinc-400 text-xs font-medium mt-1 leading-relaxed">A repair attempt stops the negativity spiral before it takes hold.</p>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-4 px-1">{REPAIR_PHRASES.map(c => <button key={c.category} onClick={() => {setCat(c.category); setSel(null);}} className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm ${cat === c.category ? 'bg-rose-500 text-white' : 'bg-white text-slate-500 border border-slate-200 hover:border-rose-200'}`}>{c.category}</button>)}</div>
-      <div className="grid gap-3">{current.phrases.map(p => <button key={p} onClick={() => setSel(p)} className={`w-full text-left p-6 rounded-[28px] border flex justify-between items-center transition-all active:bg-rose-50 ${sel === p ? 'border-rose-500 bg-rose-50 shadow-md scale-[1.02]' : 'border-slate-100 hover:border-rose-200 shadow-sm'}`}><span className="font-semibold text-slate-800 text-base">{p}</span>{sel === p && <Check size={20} className="text-rose-600"/>}</button>)}</div>
-      {sel && <div className="bg-indigo-600 p-8 rounded-[40px] text-white mt-6 shadow-2xl text-center"><h4 className="font-bold mb-4 flex items-center justify-center gap-2 underline underline-offset-8">Loverrr Response Guide</h4><p className="text-base leading-relaxed font-medium italic">"Acknowledge the attempt! Say: 'I hear you. Thank you for repairing. Let's slow down.'"</p><p className="text-xs text-indigo-300 mt-6 font-bold uppercase tracking-wide">Outcome: {current.outcome}</p></div>}
+      <div className="flex gap-2 overflow-x-auto pb-4 px-1">{REPAIR_PHRASES.map(c => <button key={c.category} onClick={() => {setCat(c.category); setSel(null);}} className={`whitespace-nowrap px-5 py-2 rounded-lg text-xs font-black transition-all uppercase tracking-widest ${cat === c.category ? "bg-zinc-900 text-white" : "bg-white text-zinc-400 border border-zinc-200 hover:border-zinc-500"}`}>{c.category}</button>)}</div>
+      <div className="grid gap-3">{current.phrases.map(p => <button key={p} onClick={() => setSel(p)} className={`w-full text-left p-5 rounded-xl border flex justify-between items-center transition-all active:scale-[0.99] ${sel === p ? "border-zinc-900 bg-zinc-900" : "border-zinc-200 hover:border-zinc-500 bg-white"}`}><span className={`font-bold text-sm ${sel === p ? "text-white" : "text-zinc-800"}`}>{p}</span>{sel === p && <Check size={16} className="text-white flex-shrink-0"/>}</button>)}</div>
+      {sel && <div className="bg-zinc-900 p-7 rounded-2xl text-white mt-4"><p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 block">Partner Response Guide</p><p className="text-sm leading-relaxed font-medium italic text-zinc-200">"Acknowledge the attempt! Say: 'I hear you. Thank you for repairing. Let's slow down.'"</p><p className="text-xs text-zinc-500 mt-4 font-bold uppercase tracking-widest">Outcome: {current.outcome}</p></div>}
     </div>
   );
 }
@@ -487,13 +587,19 @@ function MagicHoursTracker({ onBack, sharedData, onUpdate }) {
   const progress = (Object.values(completed).filter(Boolean).length / MAGIC_HOURS.length) * 100;
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
-      <div className="bg-white p-10 rounded-[44px] border border-slate-200 shadow-2xl text-center">
-        <span className="text-5xl font-bold text-rose-500 mb-2 block tabular-nums">{Math.round(progress)}%</span>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">6 Magic Hours</h2>
-        <div className="w-full bg-slate-100 h-4 rounded-full overflow-hidden mt-6 shadow-inner"><div className="bg-rose-500 h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div></div>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white">
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Daily Rituals</p>
+        <h2 className="text-2xl font-black tracking-tight mb-4">6 Magic Hours ✨</h2>
+        <div className="flex items-center gap-4">
+          <span className="text-4xl font-black tabular-nums text-white">{Math.round(progress)}%</span>
+          <div className="flex-grow">
+            <div className="w-full bg-zinc-700 h-2.5 rounded-full overflow-hidden"><div className="bg-white h-full transition-all duration-1000 rounded-full" style={{ width: `${progress}%` }}></div></div>
+            <p className="text-zinc-400 text-xs font-medium mt-1.5">Today's rituals complete</p>
+          </div>
+        </div>
       </div>
-      <div className="space-y-4">{MAGIC_HOURS.map(h => <div key={h.id} onClick={() => onUpdate({ completedRituals: { ...completed, [h.id]: !completed[h.id] } })} className={`p-6 rounded-[36px] border cursor-pointer flex items-center gap-6 transition-all ${completed[h.id] ? 'bg-emerald-50 border-emerald-200 shadow-lg translate-x-1' : 'bg-white hover:border-emerald-100 shadow-sm'}`}><div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${completed[h.id] ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-50 text-slate-300 shadow-inner'}`}>{completed[h.id] ? <CheckCircle size={28}/> : <Clock size={28}/>}</div><div className="flex-grow"><div className="flex justify-between items-center"><h3 className="font-bold text-base text-slate-800 tracking-tight">{h.label}</h3><span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">{h.time}</span></div><p className="text-sm text-slate-500 font-medium leading-relaxed mt-1">{h.desc}</p></div></div>)}</div>
+      <div className="space-y-4">{MAGIC_HOURS.map(h => <div key={h.id} onClick={() => onUpdate({ completedRituals: { ...completed, [h.id]: !completed[h.id] } })} className={`p-5 rounded-2xl border cursor-pointer flex items-center gap-4 transition-all active:scale-[0.99] ${completed[h.id] ? 'bg-zinc-900 border-zinc-900' : 'bg-white border-zinc-200 hover:border-zinc-400'}`}><div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all flex-shrink-0 ${completed[h.id] ? 'bg-white text-zinc-900' : 'bg-zinc-100 text-zinc-300'}`}>{completed[h.id] ? <CheckCircle size={28}/> : <Clock size={28}/>}</div><div className="flex-grow"><div className="flex justify-between items-center"><h3 className={`font-black text-sm tracking-tight ${completed[h.id] ? "text-white" : "text-zinc-900"}`}>{h.label}</h3><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${completed[h.id] ? "bg-zinc-700 text-zinc-300" : "bg-zinc-100 text-zinc-400"}`}>{h.time}</span></div><p className={`text-xs font-medium leading-relaxed mt-0.5 ${completed[h.id] ? "text-zinc-400" : "text-zinc-400"}`}>{h.desc}</p></div></div>)}</div>
     </div>
   );
 }
@@ -527,7 +633,7 @@ function ThinkingTraps({ onBack }) {
   const colorMap = {
     rose: 'bg-rose-50 border-rose-200 text-rose-700',
     indigo: 'bg-indigo-50 border-indigo-200 text-indigo-700',
-    slate: 'bg-slate-50 border-slate-200 text-slate-700',
+    slate: 'bg-zinc-50 border-zinc-200 text-zinc-700',
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
     amber: 'bg-amber-50 border-amber-200 text-amber-700',
     orange: 'bg-orange-50 border-orange-200 text-orange-700',
@@ -580,24 +686,24 @@ Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
 
   if (selectedTrap) return (
     <div className="space-y-6 pb-12">
-      <button onClick={() => setSelectedTrap(null)} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
-      <div className="bg-white rounded-[40px] border border-slate-200 shadow-2xl overflow-hidden">
-        <div className="bg-slate-900 p-8 text-white">
+      <button onClick={() => setSelectedTrap(null)} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
+        <div className="bg-zinc-900 p-7 text-white relative overflow-hidden">
           <div className="text-5xl mb-4">{selectedTrap.emoji}</div>
           <h3 className="text-2xl font-bold tracking-tight">{selectedTrap.name}</h3>
         </div>
         <div className="p-8 space-y-6">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">What it is</p>
-            <p className="text-base text-slate-700 font-medium leading-relaxed">{selectedTrap.description}</p>
+            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">What it is</p>
+            <p className="text-base text-zinc-700 font-medium leading-relaxed">{selectedTrap.description}</p>
           </div>
-          <div className="bg-rose-50 p-5 rounded-2xl border border-rose-100">
-            <p className="text-xs font-bold text-rose-600 uppercase tracking-wide mb-2">Example</p>
-            <p className="text-sm text-slate-700 italic font-medium">"{selectedTrap.example}"</p>
+          <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100">
+            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Example</p>
+            <p className="text-sm text-zinc-700 italic font-medium">"{selectedTrap.example}"</p>
           </div>
-          <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
-            <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> How to Reframe</p>
-            <p className="text-sm text-slate-700 font-medium leading-relaxed">{selectedTrap.reframe}</p>
+          <div className="bg-zinc-900 p-4 rounded-xl">
+            <p className="text-xs font-black text-zinc-300 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> How to Reframe</p>
+            <p className="text-sm text-zinc-200 font-medium leading-relaxed">{selectedTrap.reframe}</p>
           </div>
         </div>
       </div>
@@ -606,18 +712,18 @@ Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
 
   if (view === 'list') return (
     <div className="space-y-4 pb-12">
-      <button onClick={() => setView('menu')} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">All Thinking Traps</h2>
-      <p className="text-sm text-slate-500 font-medium">Tap any trap to learn more and how to reframe it.</p>
+      <button onClick={() => setView('menu')} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">All Thinking Traps</h2>
+      <p className="text-sm text-zinc-500 font-medium">Tap any trap to learn more and how to reframe it.</p>
       <div className="space-y-3">
         {THINKING_TRAPS_DATA.map((trap, i) => (
-          <button key={i} onClick={() => setSelectedTrap(trap)} className="w-full bg-white p-5 rounded-[28px] border border-slate-200 text-left flex items-center gap-4 hover:border-rose-200 transition-all active:scale-95 shadow-sm">
+          <button key={i} onClick={() => setSelectedTrap(trap)} className="w-full bg-white p-4 rounded-2xl border border-zinc-200 text-left flex items-center gap-4 hover:border-zinc-900 transition-all active:scale-95 group">
             <span className="text-3xl">{trap.emoji}</span>
             <div className="flex-grow">
-              <h3 className="font-bold text-slate-800 text-base">{trap.name}</h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">{trap.description}</p>
+              <h3 className="font-black text-zinc-900 text-sm group-hover:text-zinc-900">{trap.name}</h3>
+              <p className="text-xs text-zinc-400 font-medium mt-0.5 line-clamp-1">{trap.description}</p>
             </div>
-            <ChevronRight size={18} className="text-slate-300 flex-shrink-0"/>
+            <ChevronRight size={18} className="text-zinc-300 flex-shrink-0"/>
           </button>
         ))}
       </div>
@@ -626,39 +732,39 @@ Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
 
   if (view === 'ai') return (
     <div className="space-y-6 pb-12">
-      <button onClick={() => { setView('menu'); setAiResult(null); setSituation(''); }} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <button onClick={() => { setView('menu'); setAiResult(null); setSituation(''); }} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> Back</button>
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Identify My Trap</h2>
-        <p className="text-slate-500 text-sm font-medium">Describe what you're thinking or feeling and AI will identify your thinking traps and help you reframe.</p>
+        <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">Identify My Trap</h2>
+        <p className="text-zinc-500 text-sm font-medium">Describe what you're thinking or feeling and AI will identify your thinking traps and help you reframe.</p>
       </div>
       <div className="space-y-3">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">What's going through your mind?</label>
-        <textarea value={situation} onChange={e => setSituation(e.target.value)} placeholder="e.g. My partner didn't text me back for 3 hours and I'm convinced they're upset with me..." rows={4} className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-amber-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm resize-none"/>
-        <button onClick={runAI} disabled={!situation.trim() || aiLoading} className="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white py-4 rounded-2xl font-bold text-base shadow-xl active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
+        <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest px-1">What's going through your mind?</label>
+        <textarea value={situation} onChange={e => setSituation(e.target.value)} placeholder="e.g. My partner didn't text me back for 3 hours and I'm convinced they're upset with me..." rows={4} className="w-full p-4 rounded-xl border border-zinc-200 bg-white focus:border-zinc-900 outline-none transition-all font-medium text-zinc-800 text-base resize-none"/>
+        <button onClick={runAI} disabled={!situation.trim() || aiLoading} className="w-full bg-zinc-900 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest active:scale-95 disabled:opacity-40 transition-all flex items-center justify-center gap-2">
           {aiLoading ? <><RefreshCw size={18} className="animate-spin"/> Analyzing...</> : <><Brain size={18}/> Identify My Traps</>}
         </button>
       </div>
-      {aiError && <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-rose-600 text-sm font-medium text-center">{aiError}</div>}
+      {aiError && <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-red-600 text-sm font-bold">{aiError}</div>}
       {aiResult && (
         <div className="space-y-4">
-          <div className="bg-amber-50 border border-amber-200 p-6 rounded-[32px]">
-            <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-3">Thinking Traps Detected</p>
+          <div className="bg-zinc-100 border border-zinc-200 p-5 rounded-2xl">
+            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 block">Thinking Traps Detected</p>
             <div className="flex flex-wrap gap-2">
-              {aiResult.traps.map((t, i) => <span key={i} className="bg-white border border-amber-200 text-amber-800 px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">{t}</span>)}
+              {aiResult.traps.map((t, i) => <span key={i} className="bg-zinc-900 text-white px-3 py-1.5 rounded-lg text-xs font-black">{t}</span>)}
             </div>
           </div>
-          <div className="bg-white border border-slate-200 p-6 rounded-[32px] shadow-sm space-y-4">
+          <div className="bg-white border border-zinc-200 p-5 rounded-2xl space-y-4">
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">What's happening</p>
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.explanation}</p>
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-wide mb-2">What's happening</p>
+              <p className="text-sm text-zinc-700 font-medium leading-relaxed">{aiResult.explanation}</p>
             </div>
-            <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
-              <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> Reframe</p>
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.reframe}</p>
+            <div className="bg-zinc-900 p-4 rounded-xl">
+              <p className="text-xs font-black text-zinc-300 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> Reframe</p>
+              <p className="text-sm text-zinc-200 font-medium leading-relaxed">{aiResult.reframe}</p>
             </div>
-            <div className="bg-indigo-50 p-5 rounded-2xl border border-indigo-100">
-              <p className="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-2">Try This Now</p>
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.suggestion}</p>
+            <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100">
+              <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Try This Now</p>
+              <p className="text-sm text-zinc-700 font-medium leading-relaxed">{aiResult.suggestion}</p>
             </div>
           </div>
         </div>
@@ -668,28 +774,29 @@ Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back to Conflict</button>
-      <div className="bg-gradient-to-br from-amber-500 to-rose-500 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
-        <Brain className="absolute -top-4 -right-4 text-white/10 w-24 h-24"/>
-        <h2 className="text-2xl font-bold mb-2">Thinking Traps</h2>
-        <p className="text-white/90 text-sm font-medium leading-relaxed">Our minds distort reality during conflict. Learn to spot and reframe the thoughts that make things worse.</p>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> Back to Conflict</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden">
+        <div className="absolute right-5 top-4 opacity-20"><IllustrationTraps /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Cognitive Patterns</p>
+        <h2 className="text-2xl font-black tracking-tight leading-tight mb-1">Thinking<br/>Traps 🕸️</h2>
+        <p className="text-zinc-400 text-xs font-medium leading-relaxed">Spot and reframe the thoughts that make conflict worse.</p>
       </div>
       <div className="space-y-3">
-        <button onClick={() => setView('ai')} className="w-full bg-white p-6 rounded-[32px] border border-slate-200 text-left flex items-center gap-4 hover:border-amber-300 transition-all active:scale-95 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500"><Brain size={28}/></div>
+        <button onClick={() => setView('ai')} className="w-full bg-white p-5 rounded-2xl border border-zinc-200 text-left flex items-center gap-4 hover:border-zinc-900 transition-all active:scale-95 group">
+          <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-900 group-hover:text-white transition-colors"><Brain size={22}/></div>
           <div className="flex-grow">
-            <h3 className="font-bold text-slate-800 text-base">Identify My Trap</h3>
-            <p className="text-sm text-slate-500">Describe your situation — AI spots your traps.</p>
+            <h3 className="font-black text-zinc-900 text-sm">Identify My Trap</h3>
+            <p className="text-xs text-zinc-400 font-medium mt-0.5">Describe your situation — AI spots your traps.</p>
           </div>
-          <ChevronRight size={20} className="text-slate-300"/>
+          <ChevronRight size={16} className="text-zinc-300"/>
         </button>
-        <button onClick={() => setView('list')} className="w-full bg-white p-6 rounded-[32px] border border-slate-200 text-left flex items-center gap-4 hover:border-rose-300 transition-all active:scale-95 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500"><Lightbulb size={28}/></div>
+        <button onClick={() => setView('list')} className="w-full bg-white p-5 rounded-2xl border border-zinc-200 text-left flex items-center gap-4 hover:border-zinc-900 transition-all active:scale-95 group">
+          <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-900 group-hover:text-white transition-colors"><Lightbulb size={22}/></div>
           <div className="flex-grow">
-            <h3 className="font-bold text-slate-800 text-base">All 12 Thinking Traps</h3>
-            <p className="text-sm text-slate-500">Learn each trap with examples and reframes.</p>
+            <h3 className="font-black text-zinc-900 text-sm">All 12 Thinking Traps</h3>
+            <p className="text-xs text-zinc-400 font-medium mt-0.5">Learn each trap with examples and how to reframe.</p>
           </div>
-          <ChevronRight size={20} className="text-slate-300"/>
+          <ChevronRight size={16} className="text-zinc-300"/>
         </button>
       </div>
     </div>
@@ -883,64 +990,65 @@ Respond with ONLY the question text, nothing else. No quotes, no explanation.`,
     const colors = colorMap[cat.color];
     return (
       <div className="space-y-6 pb-12">
-        <button onClick={() => { setSelectedCategory(null); setCurrentQ(null); setIsFlipped(false); }} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> All Categories</button>
+        <button onClick={() => { setSelectedCategory(null); setCurrentQ(null); setIsFlipped(false); }} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> All Categories</button>
         <div className="text-center">
           <span className="text-5xl">{cat.emoji}</span>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight mt-2">{cat.label}</h2>
+          <h2 className="text-2xl font-bold text-zinc-900 tracking-tight mt-2">{cat.label}</h2>
         </div>
 
         {/* Flip Card */}
-        <div onClick={() => currentQ && setIsFlipped(!isFlipped)} className={`min-h-[280px] rounded-[40px] border-2 cursor-pointer flex items-center justify-center p-8 text-center transition-all duration-500 shadow-2xl ${currentQ ? (isFlipped ? `${colors.bg} border-transparent text-white` : 'bg-white border-slate-200') : 'bg-slate-50 border-slate-100'}`}>
+        <div onClick={() => currentQ && setIsFlipped(!isFlipped)} className={`min-h-[260px] rounded-2xl border-2 cursor-pointer flex items-center justify-center p-7 text-center transition-all duration-300 ${currentQ ? (isFlipped ? "bg-zinc-900 border-zinc-900 text-white" : "bg-white border-zinc-200") : "bg-zinc-50 border-zinc-100"}`}>
           {!currentQ ? (
             <div className="space-y-4">
               <span className="text-6xl">{cat.emoji}</span>
-              <p className="text-slate-400 font-medium">Tap a button below to get your first question!</p>
+              <p className="text-zinc-400 font-medium">Tap a button below to get your first question!</p>
             </div>
           ) : isFlipped ? (
             <div className="space-y-4">
-              <p className="text-xl font-bold leading-relaxed">"{currentQ}"</p>
-              <p className="text-white/70 text-sm font-medium">Tap card to flip back</p>
+              <p className="text-lg font-black leading-relaxed text-white">"{currentQ}"</p>
+              <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-2">Tap to flip back</p>
             </div>
           ) : (
             <div className="space-y-4">
               <span className="text-6xl">{cat.emoji}</span>
-              <p className={`text-base font-bold ${colors.text}`}>Tap to reveal question</p>
+              <p className="text-sm font-black text-zinc-400 uppercase tracking-widest">Tap to reveal</p>
             </div>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => getNextQuestion(cat)} className={`${colors.btn} text-white py-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2`}>
+          <button onClick={() => getNextQuestion(cat)} className="bg-zinc-900 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2">
             <Shuffle size={16}/> Random
           </button>
-          <button onClick={() => getAIQuestion(cat)} disabled={aiLoading} className="bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60">
+          <button onClick={() => getAIQuestion(cat)} disabled={aiLoading} className="bg-white border border-zinc-200 text-zinc-900 py-4 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40 hover:border-zinc-900">
             {aiLoading ? <><RefreshCw size={16} className="animate-spin"/> Generating...</> : <><Sparkles size={16}/> AI Question</>}
           </button>
         </div>
-        <p className="text-center text-xs text-slate-400 font-medium">Tap the card to reveal • Tap again to flip back</p>
+        <p className="text-center text-xs text-zinc-400 font-medium tracking-wide">Tap card to reveal — tap again to flip</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 pb-12">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
-      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
-        <MessageSquare className="absolute -top-4 -right-4 text-white/10 w-24 h-24"/>
-        <h2 className="text-2xl font-bold mb-2">Conversation Starters</h2>
-        <p className="text-white/90 text-sm font-medium leading-relaxed">100+ questions across 7 categories. Perfect for road trips, date nights, or a quiet evening together.</p>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden">
+        <div className="absolute right-5 top-4 opacity-20"><IllustrationConvo /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Conversation Starters</p>
+        <h2 className="text-2xl font-black tracking-tight leading-tight mb-1">Questions for<br/>Every Moment 💬</h2>
+        <p className="text-zinc-400 text-xs font-medium leading-relaxed">100+ questions · 7 categories · Unlimited AI</p>
       </div>
       <div className="space-y-3">
         {CONVO_CATEGORIES.map(cat => {
           const colors = colorMap[cat.color];
           return (
-            <button key={cat.id} onClick={() => { setSelectedCategory(cat.id); setCurrentQ(null); setIsFlipped(false); }} className="w-full bg-white p-5 rounded-[28px] border border-slate-200 text-left flex items-center gap-4 hover:border-slate-300 transition-all active:scale-95 shadow-sm">
+            <button key={cat.id} onClick={() => { setSelectedCategory(cat.id); setCurrentQ(null); setIsFlipped(false); }} className="w-full bg-white p-4 rounded-2xl border border-zinc-200 text-left flex items-center gap-4 hover:border-zinc-900 transition-all active:scale-95 group">
               <span className="text-3xl">{cat.emoji}</span>
               <div className="flex-grow">
-                <h3 className="font-bold text-slate-800 text-base">{cat.label}</h3>
-                <p className="text-xs text-slate-500 font-medium">{cat.questions.length} questions + unlimited AI</p>
+                <h3 className="font-black text-zinc-900 text-sm">{cat.label}</h3>
+                <p className="text-xs text-zinc-400 font-medium mt-0.5">{cat.questions.length} questions + unlimited AI</p>
               </div>
-              <ChevronRight size={18} className="text-slate-300"/>
+              <ChevronRight size={18} className="text-zinc-300"/>
             </button>
           );
         })}
@@ -1035,24 +1143,26 @@ Keep breakdown to 2-4 items maximum. Be concise.`,
 
   return (
     <div className="space-y-6 pb-12">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Phrase Polisher</h2>
-        <p className="text-slate-500 text-sm font-medium">Type what you want to say — even roughly — and get a Gottman-approved version back.</p>
+      <button onClick={onBack} className="text-zinc-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-zinc-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <div className="bg-zinc-900 rounded-2xl p-7 text-white relative overflow-hidden">
+        <div className="absolute right-5 top-4 opacity-20"><IllustrationPolish /></div>
+        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">AI-Powered</p>
+        <h2 className="text-2xl font-black tracking-tight leading-tight mb-1">Phrase<br/>Polisher ✨</h2>
+        <p className="text-zinc-400 text-xs font-medium leading-relaxed">Type it rough — get a Gottman-approved version back.</p>
       </div>
       <div className="space-y-3">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">What do you want to say?</label>
+        <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest px-1">What do you want to say?</label>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="e.g. You never listen to me and it's so frustrating..."
           rows={4}
-          className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-indigo-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm resize-none"
+          className="w-full p-4 rounded-xl border border-zinc-200 bg-white focus:border-zinc-900 outline-none transition-all font-medium text-zinc-800 text-base resize-none"
         />
         <button
           onClick={() => polish(input)}
           disabled={!input.trim() || loading}
-          className="w-full bg-gradient-to-r from-rose-500 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-zinc-900 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest active:scale-95 disabled:opacity-40 transition-all flex items-center justify-center gap-2"
         >
           {loading ? (
             <><RefreshCw size={18} className="animate-spin" /> Polishing...</>
@@ -1062,34 +1172,34 @@ Keep breakdown to 2-4 items maximum. Be concise.`,
         </button>
       </div>
       {error && (
-        <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-rose-600 text-sm font-medium text-center">
+        <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-red-600 text-sm font-bold">
           {error}
         </div>
       )}
       {result && (
         <div className="space-y-4">
-          <div className="bg-indigo-600 p-8 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-zinc-900 p-7 rounded-2xl text-white relative overflow-hidden">
             <Sparkles className="absolute -top-4 -right-4 text-white/10 w-24 h-24" />
-            <p className="text-xs font-bold text-indigo-300 mb-3 uppercase tracking-widest">Gottman-Approved Version</p>
-            <p className="text-lg font-bold italic leading-relaxed mb-6">"{result.polished}"</p>
+            <p className="text-xs font-black text-zinc-400 mb-3 uppercase tracking-widest">Gottman-Approved Version</p>
+            <p className="text-lg font-bold italic leading-relaxed mb-6 text-zinc-100">"{result.polished}"</p>
             <div className="flex gap-3">
-              <button onClick={handleCopy} className="flex-1 bg-white text-indigo-600 py-3 rounded-2xl font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2">
+              <button onClick={handleCopy} className="flex-1 bg-white text-zinc-900 py-3 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2">
                 {copied ? <><Check size={16}/> Copied!</> : <><Copy size={16}/> Copy</>}
               </button>
-              <button onClick={handleRefine} className="flex-1 bg-indigo-500 text-white py-3 rounded-2xl font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 border border-indigo-400">
+              <button onClick={handleRefine} className="flex-1 bg-zinc-700 text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2">
                 <RefreshCw size={16}/> Refine Further
               </button>
             </div>
           </div>
-          <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100">
-              <h3 className="font-bold text-slate-800 text-base flex items-center gap-2"><ChevronDown size={18} className="text-rose-400"/> What changed & why</h3>
+          <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
+            <div className="p-4 border-b border-zinc-100">
+              <h3 className="font-black text-zinc-900 text-sm flex items-center gap-2 uppercase tracking-widest"><ChevronDown size={18} className="text-rose-400"/> What changed & why</h3>
             </div>
-            <div className="divide-y divide-slate-50">
+            <div className="divide-y divide-zinc-50">
               {result.breakdown.map((item, i) => (
                 <div key={i} className="p-5 space-y-2">
-                  <p className="text-xs font-bold text-rose-500 uppercase tracking-wide flex items-center gap-1.5"><AlertCircle size={12}/> {item.issue}</p>
-                  <p className="text-sm text-slate-600 font-medium leading-relaxed">{item.fix}</p>
+                  <p className="text-xs font-black text-zinc-400 uppercase tracking-widest flex items-center gap-1.5"><AlertCircle size={12}/> {item.issue}</p>
+                  <p className="text-sm text-zinc-600 font-medium leading-relaxed">{item.fix}</p>
                 </div>
               ))}
             </div>
@@ -1102,10 +1212,41 @@ Keep breakdown to 2-4 items maximum. Be concise.`,
 
 // --- Common Components ---
 
-function NavButton({ icon, label, active, onClick }) { return <button onClick={onClick} className={`flex flex-col items-center p-3 rounded-2xl transition-all ${active ? 'text-rose-600 bg-rose-50/70 shadow-sm' : 'text-slate-400 hover:text-slate-500'}`}><div>{icon}</div><span className="text-xs font-semibold mt-1.5">{label}</span></button>; }
-function Card({ icon, title, subtitle, onClick }) { return <button onClick={onClick} className="bg-white p-6 rounded-[36px] border border-slate-200 text-left active:scale-95 flex flex-col items-start min-h-[170px] shadow-sm group hover:border-rose-300 transition-all"><div className="bg-slate-50 p-4 rounded-2xl mb-auto group-hover:bg-rose-50 transition-colors shadow-inner">{icon}</div><h3 className="font-bold text-slate-800 text-base tracking-tight">{title}</h3><p className="text-slate-500 text-xs font-semibold mt-1.5">{subtitle}</p></button>; }
-function InputField({ label, val, setVal, placeholder }) { return <div className="space-y-2"><label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-3">{label}</label><input type="text" value={val} onChange={e => setVal(e.target.value)} placeholder={placeholder} className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-indigo-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm" /></div>; }
-function ActionButton({ title, desc, onClick, color, className="" }) { 
-  const c = { rose: "bg-rose-50 border-rose-200 text-rose-900 shadow-rose-100", indigo: "bg-indigo-50 border-indigo-200 text-indigo-900 shadow-indigo-100", amber: "bg-amber-50 border-amber-200 text-amber-900 shadow-amber-100" };
-  return <button onClick={onClick} className={`w-full p-8 rounded-[36px] border text-left shadow-sm transition-all active:scale-[0.98] ${c[color]} ${className}`}><h4 className="font-bold text-lg tracking-tight">{title}</h4><p className="text-sm opacity-80 font-medium mt-1.5 leading-relaxed">{desc}</p></button>; 
+function NavButton({ icon, label, active, onClick }) {
+  return (
+    <button onClick={onClick} className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${active ? "bg-zinc-900 text-white" : "text-zinc-400 hover:text-zinc-600"}`}>
+      <div>{icon}</div>
+      <span className="text-[10px] font-bold tracking-wide uppercase">{label}</span>
+    </button>
+  );
+}
+function Card({ icon, title, subtitle, onClick }) {
+  return (
+    <button onClick={onClick} className="bg-white p-5 rounded-2xl border border-zinc-200 text-left active:scale-95 flex flex-col items-start min-h-[150px] group hover:border-zinc-900 hover:bg-zinc-900 transition-all duration-200">
+      <div className="bg-zinc-100 p-3 rounded-xl mb-auto group-hover:bg-white/10 transition-colors">{icon}</div>
+      <h3 className="font-black text-zinc-900 text-sm tracking-tight group-hover:text-white">{title}</h3>
+      <p className="text-zinc-400 text-xs font-semibold mt-1 group-hover:text-zinc-300">{subtitle}</p>
+    </button>
+  );
+}
+function InputField({ label, val, setVal, placeholder }) {
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-black text-zinc-400 uppercase tracking-widest">{label}</label>
+      <input type="text" value={val} onChange={e => setVal(e.target.value)} placeholder={placeholder} className="w-full p-4 rounded-xl border border-zinc-200 bg-white focus:border-zinc-900 outline-none transition-all font-medium text-zinc-800 text-base" />
+    </div>
+  );
+}
+function ActionButton({ title, desc, onClick, color, className="" }) {
+  const c = {
+    rose: "border-zinc-200 hover:border-rose-500 hover:bg-rose-50",
+    indigo: "border-zinc-200 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white",
+    amber: "border-zinc-200 hover:border-amber-500 hover:bg-amber-50",
+  };
+  return (
+    <button onClick={onClick} className={`w-full p-6 rounded-2xl border bg-white text-left transition-all duration-200 active:scale-[0.98] group ${c[color]} ${className}`}>
+      <h4 className="font-black text-zinc-900 text-base tracking-tight group-hover:inherit">{title}</h4>
+      <p className="text-sm text-zinc-400 font-medium mt-1 leading-relaxed">{desc}</p>
+    </button>
+  );
 }
