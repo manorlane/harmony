@@ -3,7 +3,8 @@ import {
   Heart, ShieldAlert, MessageCircle, Clock, BookOpen, CheckCircle, 
   ArrowRight, ArrowLeft, Smile, Zap, User, Sparkles, HelpCircle, 
   Copy, Check, Info, AlertCircle, Play, Pause, ChevronRight,
-  Activity, Search, HeartHandshake, Wand2, RefreshCw, ChevronDown
+  Activity, Search, HeartHandshake, Wand2, RefreshCw, ChevronDown,
+  Brain, Lightbulb, MessageSquare, Shuffle, ChevronLeft, Star
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
@@ -184,14 +185,15 @@ export default function App() {
     
     switch (activeTab) {
       case 'home': return <HomeView onNavigate={setActiveTab} coupleId={coupleId} />;
-      case 'navigator': return <ConflictNavigator onBack={() => setActiveTab('home')} onProcess={() => setActiveTab('repair-journey')} onHorsemen={() => setActiveTab('horsemen')} onRepair={() => setActiveTab('repair')} />;
+      case 'navigator': return <ConflictNavigator onBack={() => setActiveTab('home')} onProcess={() => setActiveTab('repair-journey')} onHorsemen={() => setActiveTab('horsemen')} onRepair={() => setActiveTab('repair')} onStartup={() => setActiveTab('startup')} onTraps={() => setActiveTab('traps')} />;
       case 'repair-journey': return <RepairJourney onBack={() => setActiveTab('navigator')} />;
       case 'horsemen': return <FourHorsemenView onBack={() => setActiveTab('navigator')} />;
       case 'repair': return <RepairToolbox onBack={() => setActiveTab('navigator')} />;
+      case 'startup': return <SoftenedStartup onBack={() => setActiveTab('navigator')} />;
+      case 'traps': return <ThinkingTraps onBack={() => setActiveTab('navigator')} />;
       case 'magic': return <MagicHoursTracker onBack={() => setActiveTab('home')} sharedData={sharedData} onUpdate={saveSharedData} />;
       case 'growth': return <GrowthHub onNavigate={setActiveTab} onBack={() => setActiveTab('home')} />;
-      case 'startup': return <SoftenedStartup onBack={() => setActiveTab('growth')} />;
-      case 'lovemap': return <LoveMapQuiz onBack={() => setActiveTab('growth')} />;
+      case 'convo': return <ConversationStarters onBack={() => setActiveTab('growth')} />;
       case 'polisher': return <PhrasePolisher onBack={() => setActiveTab('home')} />;
       default: return <HomeView onNavigate={setActiveTab} coupleId={coupleId} />;
     }
@@ -218,9 +220,9 @@ export default function App() {
       {coupleId && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 z-40 shadow-xl flex justify-around">
           <NavButton icon={<Clock size={24}/>} label="Rituals" active={activeTab === 'magic'} onClick={() => setActiveTab('magic')} />
-          <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={['navigator','repair-journey','horsemen','repair'].includes(activeTab)} onClick={() => setActiveTab('navigator')} />
+          <NavButton icon={<ShieldAlert size={24}/>} label="Conflict" active={['navigator','repair-journey','horsemen','repair','startup','traps'].includes(activeTab)} onClick={() => setActiveTab('navigator')} />
           <NavButton icon={<Wand2 size={24}/>} label="Polish" active={activeTab === 'polisher'} onClick={() => setActiveTab('polisher')} />
-          <NavButton icon={<Sparkles size={24}/>} label="Growth" active={['growth','lovemap','startup'].includes(activeTab)} onClick={() => setActiveTab('growth')} />
+          <NavButton icon={<Sparkles size={24}/>} label="Growth" active={['growth','convo'].includes(activeTab)} onClick={() => setActiveTab('growth')} />
         </nav>
       )}
     </div>
@@ -274,19 +276,11 @@ function GrowthHub({ onNavigate, onBack }) {
       <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Space</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Growth Hub</h2>
       <div className="space-y-4">
-        <button onClick={() => onNavigate('lovemap')} className="w-full bg-white p-6 rounded-3xl border border-slate-200 text-left flex items-center gap-4 hover:border-emerald-300 transition-all active:scale-95 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500"><HelpCircle size={28} /></div>
+        <button onClick={() => onNavigate('convo')} className="w-full bg-white p-6 rounded-3xl border border-slate-200 text-left flex items-center gap-4 hover:border-emerald-300 transition-all active:scale-95 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500"><MessageSquare size={28} /></div>
           <div className="flex-grow">
-            <h3 className="font-bold text-slate-800 text-base">Love Map Quiz</h3>
-            <p className="text-sm text-slate-500">Update your knowledge of each other.</p>
-          </div>
-          <ChevronRight size={20} className="text-slate-300" />
-        </button>
-        <button onClick={() => onNavigate('startup')} className="w-full bg-white p-6 rounded-3xl border border-slate-200 text-left flex items-center gap-4 hover:border-indigo-300 transition-all active:scale-95 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500"><MessageCircle size={28} /></div>
-          <div className="flex-grow">
-            <h3 className="font-bold text-slate-800 text-base">Start-up Guide</h3>
-            <p className="text-sm text-slate-500">Learn to build softened complaints.</p>
+            <h3 className="font-bold text-slate-800 text-base">Conversation Starters</h3>
+            <p className="text-sm text-slate-500">Fun questions for road trips, picnics & date nights.</p>
           </div>
           <ChevronRight size={20} className="text-slate-300" />
         </button>
@@ -295,7 +289,7 @@ function GrowthHub({ onNavigate, onBack }) {
   );
 }
 
-function ConflictNavigator({ onBack, onProcess, onHorsemen, onRepair }) {
+function ConflictNavigator({ onBack, onProcess, onHorsemen, onRepair, onStartup, onTraps }) {
   const [st, setSt] = useState('s');
   if (st === 'f') return <FloodingView onBack={() => setSt('s')} />;
   return (
@@ -307,6 +301,10 @@ function ConflictNavigator({ onBack, onProcess, onHorsemen, onRepair }) {
         <div className="flex gap-3">
           <ActionButton title="Horsemen" desc="Identify patterns" onClick={onHorsemen} color="rose" className="flex-1" />
           <ActionButton title="Break" desc="Flooding" onClick={() => setSt('f')} color="indigo" className="flex-1" />
+        </div>
+        <div className="flex gap-3">
+          <ActionButton title="Thinking Traps" desc="Spot cognitive distortions" onClick={onTraps} color="amber" className="flex-1" />
+          <ActionButton title="Start-up Guide" desc="Soften your approach" onClick={onStartup} color="indigo" className="flex-1" />
         </div>
         <ActionButton title="The REPAIR Journey" desc="Full 6-step roadmap for conflict" onClick={onProcess} color="amber" />
       </div>
@@ -410,7 +408,7 @@ function SoftenedStartup({ onBack }) {
 
   return (
     <div className="space-y-8 pb-12">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
+      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back to Conflict</button>
       <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Start-up Guide</h2>
       <div className="space-y-6">
         <div className="space-y-3">
@@ -464,20 +462,7 @@ function FourHorsemenView({ onBack }) {
   );
 }
 
-function LoveMapQuiz({ onBack }) {
-  const [idx, setIdx] = useState(0);
-  return (
-    <div className="space-y-6">
-      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18} /> Back</button>
-      <div className="bg-white p-12 rounded-[40px] border border-slate-200 shadow-2xl text-center min-h-[460px] flex flex-col justify-center relative overflow-hidden">
-        <Sparkles className="absolute top-8 left-8 text-emerald-100" size={48} />
-        <div className="bg-emerald-100 p-7 rounded-[30px] mb-10 mx-auto text-emerald-600 w-24 h-24 flex items-center justify-center shadow-inner"><HelpCircle size={48} /></div>
-        <h3 className="text-2xl font-bold mb-14 px-2 text-slate-800 leading-tight tracking-tight">{LOVE_MAP_QUESTIONS[idx]}</h3>
-        <button onClick={() => setIdx((idx + 1) % LOVE_MAP_QUESTIONS.length)} className="w-full bg-emerald-600 text-white py-5 rounded-[22px] font-bold shadow-xl hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3 text-base">Next Question <ArrowRight size={22} /></button>
-      </div>
-    </div>
-  );
-}
+// LoveMapQuiz replaced by ConversationStarters
 
 function RepairToolbox({ onBack }) {
   const [cat, setCat] = useState(REPAIR_PHRASES[0].category);
@@ -509,6 +494,457 @@ function MagicHoursTracker({ onBack, sharedData, onUpdate }) {
         <div className="w-full bg-slate-100 h-4 rounded-full overflow-hidden mt-6 shadow-inner"><div className="bg-rose-500 h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div></div>
       </div>
       <div className="space-y-4">{MAGIC_HOURS.map(h => <div key={h.id} onClick={() => onUpdate({ completedRituals: { ...completed, [h.id]: !completed[h.id] } })} className={`p-6 rounded-[36px] border cursor-pointer flex items-center gap-6 transition-all ${completed[h.id] ? 'bg-emerald-50 border-emerald-200 shadow-lg translate-x-1' : 'bg-white hover:border-emerald-100 shadow-sm'}`}><div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${completed[h.id] ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-50 text-slate-300 shadow-inner'}`}>{completed[h.id] ? <CheckCircle size={28}/> : <Clock size={28}/>}</div><div className="flex-grow"><div className="flex justify-between items-center"><h3 className="font-bold text-base text-slate-800 tracking-tight">{h.label}</h3><span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">{h.time}</span></div><p className="text-sm text-slate-500 font-medium leading-relaxed mt-1">{h.desc}</p></div></div>)}</div>
+    </div>
+  );
+}
+
+
+// --- Thinking Traps Data ---
+const THINKING_TRAPS_DATA = [
+  { name: "Jumping to Conclusions", emoji: "🦘", color: "rose", description: "Making assumptions about your partner without evidence.", example: "Your partner is quiet so you assume they're angry at you.", reframe: "Ask yourself: What actual evidence do I have? Could there be another explanation?" },
+  { name: "Mind-Reading", emoji: "🔮", color: "indigo", description: "Assuming you know what your partner is thinking or feeling.", example: "You're sure your partner doesn't want to go out, even though they agreed to plans.", reframe: "Replace assumptions with curiosity. Ask: 'What are you thinking right now?'" },
+  { name: "All-or-Nothing Thinking", emoji: "⚫", color: "slate", description: "Seeing things in black and white with no middle ground.", example: "You have one argument and think 'This relationship is over.'", reframe: "Look for the gray area. One bad moment doesn't erase all the good ones." },
+  { name: "Overgeneralization", emoji: "🌊", color: "blue", description: "Using one incident to describe your partner's behavior in general.", example: "Partner forgets anniversary → 'You never care about our relationship.'", reframe: "Replace 'always' and 'never' with 'sometimes' or 'in this situation.'" },
+  { name: "Magnifying & Minimizing", emoji: "🔍", color: "amber", description: "Blowing up the negatives and shrinking the positives.", example: "Focusing on one critical comment while ignoring 10 kind ones.", reframe: "Deliberately list 3 positive things your partner did recently." },
+  { name: "Personalization", emoji: "🎯", color: "rose", description: "Taking your partner's behavior as a personal attack.", example: "Partner didn't do dishes → 'They don't respect me.'", reframe: "Consider external factors. Their behavior is usually about them, not you." },
+  { name: "Catastrophizing", emoji: "💥", color: "orange", description: "Assuming the worst possible outcome will happen.", example: "Partner is 10 mins late → imagining they've been in an accident or are cheating.", reframe: "Ask: What is the most likely explanation? What would I tell a friend in this situation?" },
+  { name: "Emotional Reasoning", emoji: "❤️‍🔥", color: "red", description: "Treating feelings as facts.", example: "'I feel unloved, therefore I am unloved.'", reframe: "Feelings are data, not facts. Ask: What evidence supports or contradicts this feeling?" },
+  { name: "Labeling", emoji: "🏷️", color: "purple", description: "Reducing your partner to a single negative label.", example: "Partner forgets a task → 'They are so irresponsible.'", reframe: "Separate the behavior from the person. The action was forgetful, not the person." },
+  { name: "Tunnel Vision", emoji: "🔭", color: "teal", description: "Only seeing what confirms your negative view of your partner.", example: "You think they're selfish so you only notice selfish acts, not generous ones.", reframe: "Actively look for one example that contradicts your current belief." },
+  { name: "Should Statements", emoji: "📏", color: "indigo", description: "Rigid rules about how your partner must think or behave.", example: "'They should know what I need without me saying it.'", reframe: "Replace 'should' with 'I would appreciate it if...' and communicate it directly." },
+  { name: "Biased Explanations", emoji: "👓", color: "amber", description: "Assuming your partner has negative motives.", example: "'They're only being nice because they want something.'", reframe: "Ask: Could there be a positive or neutral reason for their behavior?" }
+];
+
+// --- Thinking Traps Component ---
+function ThinkingTraps({ onBack }) {
+  const [view, setView] = useState('menu'); // menu | list | identify | ai
+  const [selectedTrap, setSelectedTrap] = useState(null);
+  const [situation, setSituation] = useState('');
+  const [aiResult, setAiResult] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  const colorMap = {
+    rose: 'bg-rose-50 border-rose-200 text-rose-700',
+    indigo: 'bg-indigo-50 border-indigo-200 text-indigo-700',
+    slate: 'bg-slate-50 border-slate-200 text-slate-700',
+    blue: 'bg-blue-50 border-blue-200 text-blue-700',
+    amber: 'bg-amber-50 border-amber-200 text-amber-700',
+    orange: 'bg-orange-50 border-orange-200 text-orange-700',
+    red: 'bg-red-50 border-red-200 text-red-700',
+    purple: 'bg-purple-50 border-purple-200 text-purple-700',
+    teal: 'bg-teal-50 border-teal-200 text-teal-700',
+  };
+
+  const runAI = async () => {
+    if (!situation.trim()) return;
+    setAiLoading(true);
+    setAiResult(null);
+    setAiError('');
+    try {
+      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+      if (!apiKey) { setAiError('API key not configured.'); setAiLoading(false); return; }
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are a cognitive behavioral therapy expert specializing in relationship conflicts. Analyze the situation described and identify thinking traps present.
+
+Respond ONLY with a JSON object in this exact format, no preamble, no markdown:
+{
+  "traps": ["Trap Name 1", "Trap Name 2"],
+  "explanation": "Brief explanation of what thinking traps are present and why",
+  "reframe": "A compassionate, practical reframe of the situation using healthier thinking",
+  "suggestion": "One concrete thing they could do or say right now"
+}`,
+          messages: [{ role: 'user', content: `My situation: "${situation}"` }]
+        })
+      });
+      if (!response.ok) { const e = await response.json(); throw new Error(e?.error?.message || 'API error'); }
+      const data = await response.json();
+      const text = data.content.map(i => i.text || '').join('');
+      const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+      setAiResult(parsed);
+    } catch (err) {
+      setAiError('Error: ' + (err.message || 'Something went wrong.'));
+    }
+    setAiLoading(false);
+  };
+
+  if (selectedTrap) return (
+    <div className="space-y-6 pb-12">
+      <button onClick={() => setSelectedTrap(null)} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <div className="bg-white rounded-[40px] border border-slate-200 shadow-2xl overflow-hidden">
+        <div className="bg-slate-900 p-8 text-white">
+          <div className="text-5xl mb-4">{selectedTrap.emoji}</div>
+          <h3 className="text-2xl font-bold tracking-tight">{selectedTrap.name}</h3>
+        </div>
+        <div className="p-8 space-y-6">
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">What it is</p>
+            <p className="text-base text-slate-700 font-medium leading-relaxed">{selectedTrap.description}</p>
+          </div>
+          <div className="bg-rose-50 p-5 rounded-2xl border border-rose-100">
+            <p className="text-xs font-bold text-rose-600 uppercase tracking-wide mb-2">Example</p>
+            <p className="text-sm text-slate-700 italic font-medium">"{selectedTrap.example}"</p>
+          </div>
+          <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+            <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> How to Reframe</p>
+            <p className="text-sm text-slate-700 font-medium leading-relaxed">{selectedTrap.reframe}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (view === 'list') return (
+    <div className="space-y-4 pb-12">
+      <button onClick={() => setView('menu')} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">All Thinking Traps</h2>
+      <p className="text-sm text-slate-500 font-medium">Tap any trap to learn more and how to reframe it.</p>
+      <div className="space-y-3">
+        {THINKING_TRAPS_DATA.map((trap, i) => (
+          <button key={i} onClick={() => setSelectedTrap(trap)} className="w-full bg-white p-5 rounded-[28px] border border-slate-200 text-left flex items-center gap-4 hover:border-rose-200 transition-all active:scale-95 shadow-sm">
+            <span className="text-3xl">{trap.emoji}</span>
+            <div className="flex-grow">
+              <h3 className="font-bold text-slate-800 text-base">{trap.name}</h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">{trap.description}</p>
+            </div>
+            <ChevronRight size={18} className="text-slate-300 flex-shrink-0"/>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (view === 'ai') return (
+    <div className="space-y-6 pb-12">
+      <button onClick={() => { setView('menu'); setAiResult(null); setSituation(''); }} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Identify My Trap</h2>
+        <p className="text-slate-500 text-sm font-medium">Describe what you're thinking or feeling and AI will identify your thinking traps and help you reframe.</p>
+      </div>
+      <div className="space-y-3">
+        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">What's going through your mind?</label>
+        <textarea value={situation} onChange={e => setSituation(e.target.value)} placeholder="e.g. My partner didn't text me back for 3 hours and I'm convinced they're upset with me..." rows={4} className="w-full p-4 rounded-[22px] border-2 border-slate-100 bg-white focus:border-amber-400 outline-none transition-all font-medium text-slate-700 text-base shadow-sm resize-none"/>
+        <button onClick={runAI} disabled={!situation.trim() || aiLoading} className="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white py-4 rounded-2xl font-bold text-base shadow-xl active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
+          {aiLoading ? <><RefreshCw size={18} className="animate-spin"/> Analyzing...</> : <><Brain size={18}/> Identify My Traps</>}
+        </button>
+      </div>
+      {aiError && <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-rose-600 text-sm font-medium text-center">{aiError}</div>}
+      {aiResult && (
+        <div className="space-y-4">
+          <div className="bg-amber-50 border border-amber-200 p-6 rounded-[32px]">
+            <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-3">Thinking Traps Detected</p>
+            <div className="flex flex-wrap gap-2">
+              {aiResult.traps.map((t, i) => <span key={i} className="bg-white border border-amber-200 text-amber-800 px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">{t}</span>)}
+            </div>
+          </div>
+          <div className="bg-white border border-slate-200 p-6 rounded-[32px] shadow-sm space-y-4">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">What's happening</p>
+              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.explanation}</p>
+            </div>
+            <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+              <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Lightbulb size={12}/> Reframe</p>
+              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.reframe}</p>
+            </div>
+            <div className="bg-indigo-50 p-5 rounded-2xl border border-indigo-100">
+              <p className="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-2">Try This Now</p>
+              <p className="text-sm text-slate-700 font-medium leading-relaxed">{aiResult.suggestion}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back to Conflict</button>
+      <div className="bg-gradient-to-br from-amber-500 to-rose-500 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
+        <Brain className="absolute -top-4 -right-4 text-white/10 w-24 h-24"/>
+        <h2 className="text-2xl font-bold mb-2">Thinking Traps</h2>
+        <p className="text-white/90 text-sm font-medium leading-relaxed">Our minds distort reality during conflict. Learn to spot and reframe the thoughts that make things worse.</p>
+      </div>
+      <div className="space-y-3">
+        <button onClick={() => setView('ai')} className="w-full bg-white p-6 rounded-[32px] border border-slate-200 text-left flex items-center gap-4 hover:border-amber-300 transition-all active:scale-95 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500"><Brain size={28}/></div>
+          <div className="flex-grow">
+            <h3 className="font-bold text-slate-800 text-base">Identify My Trap</h3>
+            <p className="text-sm text-slate-500">Describe your situation — AI spots your traps.</p>
+          </div>
+          <ChevronRight size={20} className="text-slate-300"/>
+        </button>
+        <button onClick={() => setView('list')} className="w-full bg-white p-6 rounded-[32px] border border-slate-200 text-left flex items-center gap-4 hover:border-rose-300 transition-all active:scale-95 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500"><Lightbulb size={28}/></div>
+          <div className="flex-grow">
+            <h3 className="font-bold text-slate-800 text-base">All 12 Thinking Traps</h3>
+            <p className="text-sm text-slate-500">Learn each trap with examples and reframes.</p>
+          </div>
+          <ChevronRight size={20} className="text-slate-300"/>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+// --- Conversation Starters Data ---
+const CONVO_CATEGORIES = [
+  { id: 'fun', label: 'Fun & Lighthearted', emoji: '😄', color: 'emerald', questions: [
+    "If you could only eat one meal for the rest of your life, what would it be?",
+    "What's the most embarrassing song you secretly love?",
+    "If you were a dog, what breed would you be and why?",
+    "What's your go-to karaoke song?",
+    "If you could have any superpower for one day, what would it be?",
+    "What's the weirdest food combination you actually enjoy?",
+    "If your life were a movie, what genre would it be?",
+    "What's the most useless talent you have?",
+    "If you could live in any TV show world, which would you pick?",
+    "What's the funniest thing that's ever happened to you?",
+    "If animals could talk, which would be the rudest?",
+    "What's the strangest dream you can remember?",
+    "If you could only wear one color forever, what would it be?",
+    "What's your most irrational fear?",
+    "If you could have dinner with any fictional character, who would it be?",
+  ]},
+  { id: 'deep', label: 'Deep & Personal', emoji: '💭', color: 'indigo', questions: [
+    "What's something you've never told anyone that you wish someone knew?",
+    "What moment in your life changed you the most?",
+    "What do you think your biggest strength is that others don't notice?",
+    "What's something you're still trying to forgive yourself for?",
+    "When do you feel most like yourself?",
+    "What's a belief you held strongly that you've since changed?",
+    "What does love mean to you — in one sentence?",
+    "What are you most afraid people will find out about you?",
+    "What part of your childhood shaped you the most?",
+    "What's something you're proud of that you've never been acknowledged for?",
+    "What would you do differently if you knew no one would judge you?",
+    "What does a truly good life look like to you?",
+    "What's your relationship like with failure?",
+    "What's something you've always wanted to say but never have?",
+    "What's the kindest thing someone has ever done for you?",
+  ]},
+  { id: 'knowme', label: 'How Well Do You Know Me?', emoji: '🎯', color: 'rose', questions: [
+    "What's my biggest insecurity?",
+    "What's the first thing I notice when I walk into a room?",
+    "What's my love language?",
+    "What's something that always cheers me up?",
+    "What's my biggest pet peeve?",
+    "What am I most proud of in my life so far?",
+    "What's something I do that I don't even realize I do?",
+    "What's my go-to comfort food?",
+    "What's something I've always wanted to try but haven't?",
+    "What's the best gift anyone has ever given me?",
+    "What's my most used phrase or word?",
+    "What would I do if I won the lottery tomorrow?",
+    "What's my biggest regret?",
+    "What's the thing that stresses me out the most?",
+    "What's my favorite memory of us together?",
+  ]},
+  { id: 'hypothetical', label: 'Would You Rather', emoji: '🤔', color: 'purple', questions: [
+    "Would you rather know when you're going to die, or how?",
+    "Would you rather be able to fly or be invisible?",
+    "Would you rather lose all your memories or never be able to make new ones?",
+    "Would you rather always say what you're thinking or never be able to speak again?",
+    "Would you rather live 100 years in the past or 100 years in the future?",
+    "Would you rather be the funniest person in the room or the smartest?",
+    "Would you rather have unlimited money or unlimited time?",
+    "Would you rather know all the languages in the world or be able to play all instruments?",
+    "Would you rather go on a road trip or a flight to a faraway destination?",
+    "Would you rather never be cold again or never be hot again?",
+    "Would you rather always win arguments or always give the best advice?",
+    "Would you rather explore the ocean or outer space?",
+    "Would you rather read minds for a day or be invisible for a day?",
+    "Would you rather only eat sweet foods or only savory foods forever?",
+    "Would you rather live in the city or the countryside for the rest of your life?",
+  ]},
+  { id: 'values', label: 'Values & Beliefs', emoji: '⭐', color: 'amber', questions: [
+    "What's the one value you'd never compromise on?",
+    "What does success look like to you — not financially, but personally?",
+    "What role does faith or spirituality play in your life?",
+    "How do you define a good person?",
+    "What do you think the purpose of life is?",
+    "What's something the world gets completely wrong?",
+    "What's one thing you think more people should care about?",
+    "How important is financial security to you vs. doing meaningful work?",
+    "What does friendship mean to you?",
+    "What do you believe about forgiveness — can people truly change?",
+    "What's your philosophy on raising children?",
+    "What's a cause you'd sacrifice something significant for?",
+    "How do you think about death?",
+    "What do you think makes a relationship last?",
+    "What's the most important lesson life has taught you so far?",
+  ]},
+  { id: 'dreams', label: 'Dreams & Bucket List', emoji: '🌟', color: 'teal', questions: [
+    "If money was no object, where would you live?",
+    "What's the one experience you want to have before you die?",
+    "What would your perfect day look like, start to finish?",
+    "If you could master any skill instantly, what would it be?",
+    "What country are you most curious to explore?",
+    "What's a business you'd start if you knew it would succeed?",
+    "What does your dream home look like?",
+    "What's something you want to learn in the next 5 years?",
+    "If you could witness any historical event, which would it be?",
+    "What's one adventure you've always wanted to go on together?",
+    "If you could write a book, what would it be about?",
+    "What does retirement look like in your dream scenario?",
+    "What's one tradition you want to create in our relationship?",
+    "If we could take one epic trip together, where would it be?",
+    "What's a goal you have that you haven't told many people?",
+  ]},
+  { id: 'memories', label: 'Our Shared Memories', emoji: '💝', color: 'pink', questions: [
+    "What's your favorite memory of our first year together?",
+    "What was your first impression of me — be honest!",
+    "What's the hardest thing we've been through together?",
+    "What moment made you realize you were falling for me?",
+    "What's a small thing I do that makes you feel loved?",
+    "What's a trip or experience we've shared that you'll never forget?",
+    "What's something silly we've laughed about that still makes you smile?",
+    "What's the best decision we've made together?",
+    "What's a challenge we faced that made us stronger?",
+    "What's something about our relationship that you never expected?",
+    "What's a moment when you were really proud of me?",
+    "What's something we used to do early on that you miss?",
+    "What's your favorite photo of us and why?",
+    "What's something I did that really surprised you?",
+    "What's a memory of us you want to recreate?",
+  ]},
+];
+
+// --- Conversation Starters Component ---
+function ConversationStarters({ onBack }) {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [currentQ, setCurrentQ] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [usedIndexes, setUsedIndexes] = useState([]);
+
+  const colorMap = {
+    emerald: { bg: 'bg-emerald-500', light: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-600', btn: 'bg-emerald-600 hover:bg-emerald-700' },
+    indigo: { bg: 'bg-indigo-500', light: 'bg-indigo-50 border-indigo-200', text: 'text-indigo-600', btn: 'bg-indigo-600 hover:bg-indigo-700' },
+    rose: { bg: 'bg-rose-500', light: 'bg-rose-50 border-rose-200', text: 'text-rose-600', btn: 'bg-rose-600 hover:bg-rose-700' },
+    purple: { bg: 'bg-purple-500', light: 'bg-purple-50 border-purple-200', text: 'text-purple-600', btn: 'bg-purple-600 hover:bg-purple-700' },
+    amber: { bg: 'bg-amber-500', light: 'bg-amber-50 border-amber-200', text: 'text-amber-600', btn: 'bg-amber-600 hover:bg-amber-700' },
+    teal: { bg: 'bg-teal-500', light: 'bg-teal-50 border-teal-200', text: 'text-teal-600', btn: 'bg-teal-600 hover:bg-teal-700' },
+    pink: { bg: 'bg-pink-500', light: 'bg-pink-50 border-pink-200', text: 'text-pink-600', btn: 'bg-pink-600 hover:bg-pink-700' },
+  };
+
+  const getNextQuestion = (cat) => {
+    const available = cat.questions.map((_, i) => i).filter(i => !usedIndexes.includes(`${cat.id}-${i}`));
+    if (available.length === 0) {
+      setUsedIndexes([]);
+      const idx = Math.floor(Math.random() * cat.questions.length);
+      setCurrentQ(cat.questions[idx]);
+      setUsedIndexes([`${cat.id}-${idx}`]);
+    } else {
+      const idx = available[Math.floor(Math.random() * available.length)];
+      setCurrentQ(cat.questions[idx]);
+      setUsedIndexes(prev => [...prev, `${cat.id}-${idx}`]);
+    }
+    setIsFlipped(false);
+  };
+
+  const getAIQuestion = async (cat) => {
+    setAiLoading(true);
+    try {
+      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+      if (!apiKey) { setAiLoading(false); return; }
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 200,
+          system: `Generate ONE creative, original conversation starter question for couples in the category: "${cat.label}". 
+Make it thought-provoking, fun, and relationship-focused. 
+Respond with ONLY the question text, nothing else. No quotes, no explanation.`,
+          messages: [{ role: 'user', content: 'Generate a fresh question.' }]
+        })
+      });
+      const data = await response.json();
+      const q = data.content.map(i => i.text || '').join('').trim();
+      setCurrentQ(q);
+      setIsFlipped(false);
+    } catch (err) { console.error(err); }
+    setAiLoading(false);
+  };
+
+  if (selectedCategory) {
+    const cat = CONVO_CATEGORIES.find(c => c.id === selectedCategory);
+    const colors = colorMap[cat.color];
+    return (
+      <div className="space-y-6 pb-12">
+        <button onClick={() => { setSelectedCategory(null); setCurrentQ(null); setIsFlipped(false); }} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> All Categories</button>
+        <div className="text-center">
+          <span className="text-5xl">{cat.emoji}</span>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight mt-2">{cat.label}</h2>
+        </div>
+
+        {/* Flip Card */}
+        <div onClick={() => currentQ && setIsFlipped(!isFlipped)} className={`min-h-[280px] rounded-[40px] border-2 cursor-pointer flex items-center justify-center p-8 text-center transition-all duration-500 shadow-2xl ${currentQ ? (isFlipped ? `${colors.bg} border-transparent text-white` : 'bg-white border-slate-200') : 'bg-slate-50 border-slate-100'}`}>
+          {!currentQ ? (
+            <div className="space-y-4">
+              <span className="text-6xl">{cat.emoji}</span>
+              <p className="text-slate-400 font-medium">Tap a button below to get your first question!</p>
+            </div>
+          ) : isFlipped ? (
+            <div className="space-y-4">
+              <p className="text-xl font-bold leading-relaxed">"{currentQ}"</p>
+              <p className="text-white/70 text-sm font-medium">Tap card to flip back</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <span className="text-6xl">{cat.emoji}</span>
+              <p className={`text-base font-bold ${colors.text}`}>Tap to reveal question</p>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => getNextQuestion(cat)} className={`${colors.btn} text-white py-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2`}>
+            <Shuffle size={16}/> Random
+          </button>
+          <button onClick={() => getAIQuestion(cat)} disabled={aiLoading} className="bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60">
+            {aiLoading ? <><RefreshCw size={16} className="animate-spin"/> Generating...</> : <><Sparkles size={16}/> AI Question</>}
+          </button>
+        </div>
+        <p className="text-center text-xs text-slate-400 font-medium">Tap the card to reveal • Tap again to flip back</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 pb-12">
+      <button onClick={onBack} className="text-slate-500 flex items-center gap-1.5 text-sm font-semibold mb-4 hover:text-slate-800 transition-colors"><ArrowLeft size={18}/> Back</button>
+      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
+        <MessageSquare className="absolute -top-4 -right-4 text-white/10 w-24 h-24"/>
+        <h2 className="text-2xl font-bold mb-2">Conversation Starters</h2>
+        <p className="text-white/90 text-sm font-medium leading-relaxed">100+ questions across 7 categories. Perfect for road trips, date nights, or a quiet evening together.</p>
+      </div>
+      <div className="space-y-3">
+        {CONVO_CATEGORIES.map(cat => {
+          const colors = colorMap[cat.color];
+          return (
+            <button key={cat.id} onClick={() => { setSelectedCategory(cat.id); setCurrentQ(null); setIsFlipped(false); }} className="w-full bg-white p-5 rounded-[28px] border border-slate-200 text-left flex items-center gap-4 hover:border-slate-300 transition-all active:scale-95 shadow-sm">
+              <span className="text-3xl">{cat.emoji}</span>
+              <div className="flex-grow">
+                <h3 className="font-bold text-slate-800 text-base">{cat.label}</h3>
+                <p className="text-xs text-slate-500 font-medium">{cat.questions.length} questions + unlimited AI</p>
+              </div>
+              <ChevronRight size={18} className="text-slate-300"/>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
